@@ -175,13 +175,13 @@ async function updateEnhancedStats() {
     // Save current deposit counts to localStorage
     localStorage.setItem('tornadoLastDeposits', JSON.stringify(newDeposits));
     
-    // Show notification if there are new deposits
-    const totalNewDeposits = Object.values(newDeposits).reduce((a, b) => a + b, 0) - 
-                             Object.values(lastKnownDeposits).reduce((a, b) => a + b, 0);
-    
-    if (totalNewDeposits > 0 && Object.keys(lastKnownDeposits).length > 0) {
-        showNewDepositsNotification(totalNewDeposits);
-    }
+    // Show notification if there are new deposits - DISABLED
+    // const totalNewDeposits = Object.values(newDeposits).reduce((a, b) => a + b, 0) - 
+    //                          Object.values(lastKnownDeposits).reduce((a, b) => a + b, 0);
+    // 
+    // if (totalNewDeposits > 0 && Object.keys(lastKnownDeposits).length > 0) {
+    //     showNewDepositsNotification(totalNewDeposits);
+    // }
 }
 
 // Show notification for new deposits
