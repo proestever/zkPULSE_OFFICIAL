@@ -27,7 +27,7 @@ desktop.ini
 *.sublime-workspace
 
 # Build files
-build/
+# build/ - commented out to include pre-built circuits for deployment
 dist/
 out/
 
