@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Build files
+build/
+dist/
+out/
+
+# Test coverage
+coverage/
+.nyc_output
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Private keys and sensitive data
+*.key
+*.pem
+private/
+secrets/
+
+# User deposit notes (should never be committed)
+*notes*.txt
+*withdrawal*.txt
+deposits.json
+
+# PM2
+.pm2/
+pm2.json
+ecosystem.config.js

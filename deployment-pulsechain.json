@@ -1,0 +1,12 @@
+{
+  "network": "PulseChain",
+  "chainId": 369,
+  "deployedAt": "2025-08-18T21:13:25.540Z",
+  "contracts": {
+    "Hasher": "0x5Aa1eE340a2E9F199f068DB35a855956429067cf",
+    "Verifier": "0x165A378540d26F1f9BEB97F30670B5B8Eb3f8aD5",
+    "ETHTornado": "0x590343A1AA6af20464A051D1EDC4f0aa9aFab590",
+    "ERC20Mock": "0x0b8ae0F1eb15A6dfC39D9D95d1de5Dc04fa9937e",
+    "ERC20Tornado": "0xC0A9eA33Fe34a7D2225D898EC3b3A200C03064e7"
+  }
+}
