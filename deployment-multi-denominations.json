@@ -1,0 +1,31 @@
+{
+  "network": "PulseChain",
+  "chainId": 369,
+  "deployedAt": "2025-08-18T21:20:35.573Z",
+  "sharedContracts": {
+    "Hasher": "0x5Aa1eE340a2E9F199f068DB35a855956429067cf",
+    "Verifier": "0x165A378540d26F1f9BEB97F30670B5B8Eb3f8aD5"
+  },
+  "tornadoContracts": {
+    "1M PLS": {
+      "address": "0x50af9dD094cd43A14FFFC38FbDb17C99eAc79A71",
+      "denomination": "1000000",
+      "denominationWei": "1000000000000000000000000"
+    },
+    "10M PLS": {
+      "address": "0xeD3D5F4fc6D7eC7921B2537f4BDa43CB53a08736",
+      "denomination": "10000000",
+      "denominationWei": "10000000000000000000000000"
+    },
+    "100M PLS": {
+      "address": "0xb9c80f49dF741579928f6d84E67e162A446b379D",
+      "denomination": "100000000",
+      "denominationWei": "100000000000000000000000000"
+    },
+    "1B PLS": {
+      "address": "0x7c3Eb4F3b52FA95162EE84D6CEc6c09B59B22225",
+      "denomination": "1000000000",
+      "denominationWei": "1000000000000000000000000000"
+    }
+  }
+}

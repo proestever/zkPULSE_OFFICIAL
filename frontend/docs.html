@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZK Pulse - Documentation</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #0a0a0a 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        
+        .docs-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0, 255, 65, 0.05);
+        }
+        
+        .logo {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            margin: 0 auto 40px auto;
+            display: block;
+        }
+        
+        h1 {
+            color: #00ff41;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+        
+        h2 {
+            color: #00ff41;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+            font-size: 1.8em;
+        }
+        
+        h3 {
+            color: #00ff41;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            color: #d0d0d0;
+        }
+        
+        .contract-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .contract-address {
+            font-family: monospace;
+            color: #00ff41;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            color: #00ff41;
+        }
+        
+        .warning {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ff6666;
+        }
+        
+        .info {
+            background: rgba(0, 255, 65, 0.05);
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+            color: #d0d0d0;
+        }
+        
+        a {
+            color: #00ff41;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        a:hover {
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff41;
+            border-radius: 8px;
+            color: #00ff41;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            background: rgba(0, 255, 65, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid rgba(0, 255, 65, 0.2);
+        }
+        
+        th {
+            background: rgba(0, 255, 65, 0.1);
+            color: #00ff41;
+            font-weight: 600;
+        }
+        
+        td {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .toc {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+        }
+        
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+        
+        .toc li {
+            padding: 5px 0;
+        }
+        
+        .toc a {
+            display: block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .toc a:hover {
+            background: rgba(0, 255, 65, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="docs-container">
+        <a href="index.html" class="back-link">← Back to App</a>
+        
+        <img src="https://i.ibb.co/wZqLV5gf/zkpulse-full-logo.png" alt="ZK Pulse" class="logo">
+        
+        <h1>Documentation</h1>
+        
+        <div class="toc">
+            <h3>Table of Contents</h3>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#contracts">Smart Contracts</a></li>
+                <li><a href="#how-to-use">How to Use</a></li>
+                <li><a href="#security">Security & Privacy</a></li>
+                <li><a href="#technical">Technical Details</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ul>
+        </div>
+        
+        <h2 id="overview">Overview</h2>
+        <p>ZK Pulse is a privacy-preserving transaction mixer for PulseChain, based on the battle-tested Tornado Cash protocol. It uses zero-knowledge proofs to break the on-chain link between deposit and withdrawal addresses, providing financial privacy for PulseChain users.</p>
+        
+        <div class="info">
+            <strong>Key Features:</strong>
+            <ul>
+                <li>Complete transaction privacy using zk-SNARKs</li>
+                <li>Non-custodial - you control your funds</li>
+                <li>Decentralized - no admin keys or backdoors</li>
+                <li>Multiple denomination pools for flexibility</li>
+                <li>Verified contracts on PulseChain</li>
+            </ul>
+        </div>
+        
+        <h2 id="how-it-works">How It Works</h2>
+        
+        <h3>1. The Privacy Process</h3>
+        <p>ZK Pulse uses a simple three-step process to provide privacy:</p>
+        
+        <ol>
+            <li><strong>Deposit:</strong> You deposit PLS into one of the denomination pools and receive a secret note</li>
+            <li><strong>Wait:</strong> Let time pass and allow others to deposit, increasing your anonymity set</li>
+            <li><strong>Withdraw:</strong> Use your note to withdraw to a different address with no traceable connection</li>
+        </ol>
+        
+        <h3>2. Zero-Knowledge Proofs</h3>
+        <p>The system uses Groth16 zk-SNARKs to prove you made a deposit without revealing which one. This cryptographic proof ensures:</p>
+        <ul>
+            <li>You can withdraw only once per deposit</li>
+            <li>The withdrawal amount matches your deposit</li>
+            <li>No link between deposit and withdrawal can be established</li>
+        </ul>
+        
+        <h3>3. Anonymity Set</h3>
+        <p>Your privacy increases with the number of deposits in the pool. The more users who deposit the same amount, the harder it becomes to trace any individual transaction.</p>
+        
+        <h2 id="contracts">Smart Contracts</h2>
+        
+        <div class="contract-box">
+            <h3>Core Infrastructure Contracts</h3>
+            <table>
+                <tr>
+                    <th>Contract</th>
+                    <th>Address</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td>Hasher</td>
+                    <td class="contract-address">0x5Aa1eE340a2E9F199f068DB35a855956429067cf</td>
+                    <td>MiMC Sponge hash function for Pedersen commitments</td>
+                </tr>
+                <tr>
+                    <td>Verifier</td>
+                    <td class="contract-address">0x165A378540d26F1f9BEB97F30670B5B8Eb3f8aD5</td>
+                    <td>Groth16 proof verification from trusted setup</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="contract-box">
+            <h3>Tornado Pool Contracts</h3>
+            <table>
+                <tr>
+                    <th>Denomination</th>
+                    <th>Contract Address</th>
+                    <th>Amount</th>
+                </tr>
+                <tr>
+                    <td>Test Pool</td>
+                    <td class="contract-address">0xad04f4Eef94Efc3a698e70324b3F96e44703f70B</td>
+                    <td>1 PLS</td>
+                </tr>
+                <tr>
+                    <td>Small</td>
+                    <td class="contract-address">0x65d1D748b4d513756cA179049227F6599D803594</td>
+                    <td>1,000,000 PLS</td>
+                </tr>
+                <tr>
+                    <td>Medium</td>
+                    <td class="contract-address">0x21349F435c703F933eBF2bb2A5aB2d716e00b205</td>
+                    <td>10,000,000 PLS</td>
+                </tr>
+                <tr>
+                    <td>Large</td>
+                    <td class="contract-address">0x2443ccEef2D2803A97A12f5A9AA7db3BEc154B73</td>
+                    <td>100,000,000 PLS</td>
+                </tr>
+                <tr>
+                    <td>Whale</td>
+                    <td class="contract-address">0x282476B716146eAAbCfBDd339e527903deFD969b</td>
+                    <td>1,000,000,000 PLS</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="info">
+            <strong>Contract Verification:</strong> All contracts are verified on Otterscan. Click any address above to view the verified source code.
+        </div>
+        
+        <h2 id="how-to-use">How to Use</h2>
+        
+        <h3>Making a Deposit</h3>
+        <ol>
+            <li><strong>Connect Wallet:</strong> Click "Connect Wallet" and approve the connection</li>
+            <li><strong>Select Amount:</strong> Choose one of the denomination pools (1M, 10M, 100M, or 1B PLS)</li>
+            <li><strong>Deposit:</strong> Click "Deposit X PLS" and confirm the transaction</li>
+            <li><strong>Save Your Note:</strong> 
+                <div class="warning">
+                    <strong>⚠️ CRITICAL:</strong> Save the deposit note that appears! This is your only way to withdraw funds. Store it securely and never share it with anyone.
+                </div>
+            </li>
+            <li><strong>Wait:</strong> Allow time to pass (recommended: wait for at least 10 more deposits)</li>
+        </ol>
+        
+        <h3>Making a Withdrawal</h3>
+        <ol>
+            <li><strong>Switch to Withdraw Tab:</strong> Click the "Withdraw" tab at the top</li>
+            <li><strong>Enter Note:</strong> Paste your saved deposit note</li>
+            <li><strong>Enter Recipient:</strong> Provide the address where you want to receive funds
+                <div class="info">
+                    <strong>Tip:</strong> Use a fresh address that has never interacted with your deposit address for maximum privacy
+                </div>
+            </li>
+            <li><strong>Generate Proof:</strong> Click "Withdraw" to generate the zero-knowledge proof</li>
+            <li><strong>Confirm Transaction:</strong> Approve the withdrawal transaction in your wallet</li>
+        </ol>
+        
+        <h3>Best Practices for Privacy</h3>
+        <ul>
+            <li><strong>Use fresh addresses:</strong> Always withdraw to a new address with no connection to your deposit address</li>
+            <li><strong>Wait before withdrawing:</strong> The longer you wait, the larger your anonymity set</li>
+            <li><strong>Vary timing:</strong> Don't withdraw immediately after depositing</li>
+            <li><strong>Use common amounts:</strong> Stick to the standard denominations</li>
+            <li><strong>Clear browser data:</strong> Use incognito mode or clear cache between deposit and withdrawal</li>
+            <li><strong>Use different wallets:</strong> Consider using different wallet providers for deposits and withdrawals</li>
+        </ul>
+        
+        <h2 id="security">Security & Privacy</h2>
+        
+        <h3>Security Features</h3>
+        <ul>
+            <li><strong>Non-custodial:</strong> Smart contracts never hold custody of your funds</li>
+            <li><strong>No admin keys:</strong> Contracts are immutable with no backdoors or pause functions</li>
+            <li><strong>Battle-tested:</strong> Based on Tornado Cash code that secured billions in value</li>
+            <li><strong>Audited cryptography:</strong> Uses established zk-SNARK circuits and trusted setup</li>
+            <li><strong>Open source:</strong> All code is verifiable on-chain</li>
+        </ul>
+        
+        <h3>Privacy Guarantees</h3>
+        <ul>
+            <li><strong>No tracking:</strong> The app stores no user data on servers</li>
+            <li><strong>Local storage only:</strong> Notes are saved only in your browser's localStorage</li>
+            <li><strong>No cookies:</strong> No tracking cookies or analytics</li>
+            <li><strong>Cryptographic privacy:</strong> Zero-knowledge proofs ensure unlinkability</li>
+        </ul>
+        
+        <div class="warning">
+            <strong>Important Privacy Considerations:</strong>
+            <ul>
+                <li>Your IP address may be visible to the RPC provider</li>
+                <li>Browser fingerprinting could potentially link sessions</li>
+                <li>Poor operational security (reusing addresses, immediate withdrawals) can compromise privacy</li>
+                <li>Always use VPN or Tor for maximum privacy</li>
+            </ul>
+        </div>
+        
+        <h2 id="technical">Technical Details</h2>
+        
+        <h3>Cryptographic Components</h3>
+        
+        <h4>Pedersen Hash</h4>
+        <p>Commitments are generated using Pedersen hash (via MiMC Sponge) in the BN254 elliptic curve field:</p>
+        <div class="code-block">
+            commitment = PedersenHash(nullifier || secret)
+        </div>
+        
+        <h4>Merkle Tree</h4>
+        <p>Deposits are stored in a Merkle tree of height 20, supporting up to 2^20 deposits per pool:</p>
+        <ul>
+            <li>Tree uses MiMC hash function</li>
+            <li>Stores last 30 roots for flexibility</li>
+            <li>Zero value: keccak256("tornado") % FIELD_SIZE</li>
+        </ul>
+        
+        <h4>Zero-Knowledge Circuit</h4>
+        <p>The withdrawal circuit proves:</p>
+        <div class="code-block">
+            Public inputs: [root, nullifierHash, recipient, relayer, fee, refund]
+            Private inputs: [nullifier, secret, pathElements, pathIndices]
+            
+            Constraints:
+            1. commitment = PedersenHash(nullifier || secret)
+            2. nullifierHash = PedersenHash(nullifier)
+            3. commitment ∈ Merkle tree with given root
+            4. All values ∈ valid field range
+        </div>
+        
+        <h3>Libraries & Dependencies</h3>
+        <table>
+            <tr>
+                <th>Component</th>
+                <th>Version</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td>Solidity</td>
+                <td>0.7.6</td>
+                <td>Smart contract language</td>
+            </tr>
+            <tr>
+                <td>OpenZeppelin</td>
+                <td>3.4.0</td>
+                <td>ReentrancyGuard</td>
+            </tr>
+            <tr>
+                <td>snarkjs</td>
+                <td>0.1.20</td>
+                <td>ZK proof generation</td>
+            </tr>
+            <tr>
+                <td>circomlib</td>
+                <td>0.0.20</td>
+                <td>Circuit components</td>
+            </tr>
+            <tr>
+                <td>websnark</td>
+                <td>0.0.4</td>
+                <td>Browser proof generation</td>
+            </tr>
+            <tr>
+                <td>fixed-merkle-tree</td>
+                <td>0.7.3</td>
+                <td>Merkle tree operations</td>
+            </tr>
+        </table>
+        
+        <h3>Gas Costs</h3>
+        <p>Approximate gas costs on PulseChain:</p>
+        <ul>
+            <li><strong>Deposit:</strong> ~1,000,000 gas</li>
+            <li><strong>Withdrawal:</strong> ~350,000 gas</li>
+        </ul>
+        
+        <h2 id="troubleshooting">Troubleshooting</h2>
+        
+        <h3>Common Issues</h3>
+        
+        <div class="contract-box">
+            <h4>Transaction Fails During Deposit</h4>
+            <p><strong>Cause:</strong> Insufficient balance or gas</p>
+            <p><strong>Solution:</strong> Ensure you have enough PLS for both the deposit amount and gas fees</p>
+        </div>
+        
+        <div class="contract-box">
+            <h4>Cannot Withdraw Funds</h4>
+            <p><strong>Possible causes:</strong></p>
+            <ul>
+                <li>Invalid or corrupted note</li>
+                <li>Already withdrawn</li>
+                <li>Wrong network</li>
+            </ul>
+            <p><strong>Solution:</strong> Verify your note is complete and you're on PulseChain (Chain ID: 369)</p>
+        </div>
+        
+        <div class="contract-box">
+            <h4>Proof Generation Fails</h4>
+            <p><strong>Cause:</strong> Browser compatibility or memory issues</p>
+            <p><strong>Solution:</strong> Use Chrome/Firefox, clear cache, or try a different device</p>
+        </div>
+        
+        <div class="contract-box">
+            <h4>Lost Deposit Note</h4>
+            <div class="warning">
+                <strong>⚠️ WARNING:</strong> If you lose your note, funds cannot be recovered. There is no way to regenerate a lost note. Always save multiple secure backups.
+            </div>
+        </div>
+        
+        <h3>Network Configuration</h3>
+        <p>Ensure your wallet is configured for PulseChain:</p>
+        <div class="code-block">
+            Network Name: PulseChain
+            RPC URL: https://rpc.pulsechain.com
+            Chain ID: 369
+            Currency Symbol: PLS
+            Block Explorer: https://otter.pulsechain.com
+        </div>
+        
+        <h3>Support</h3>
+        <p>For additional help:</p>
+        <ul>
+            <li>Double-check you're connected to PulseChain</li>
+            <li>Ensure your wallet has sufficient PLS for gas</li>
+            <li>Try using a different browser or clearing cache</li>
+            <li>Verify your note format is complete (should start with "tornado-")</li>
+        </ul>
+        
+        <div class="info">
+            <strong>Remember:</strong> This is a decentralized protocol. There is no customer support or way to recover lost notes. Use at your own risk and always maintain secure backups of your deposit notes.
+        </div>
+        
+        <div style="margin-top: 60px; text-align: center; padding-top: 30px; border-top: 1px solid rgba(0, 255, 65, 0.2);">
+            <p style="color: #666;">ZK Pulse - Privacy for PulseChain</p>
+            <p style="color: #666; font-size: 0.9em;">Built on Tornado Cash Protocol</p>
+        </div>
+    </div>
+</body>
+</html>
