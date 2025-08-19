@@ -6,7 +6,7 @@ const fsPromises = require('fs').promises;
 const circomlib = require('circomlib');
 const snarkjs = require('snarkjs');
 const bigInt = snarkjs.bigInt;
-const merkleTree = require('fixed-merkle-tree');
+const { MerkleTree } = require('fixed-merkle-tree');
 const { Web3 } = require('web3');
 const buildGroth16 = require('websnark/src/groth16');
 const websnarkUtils = require('websnark/src/utils');
@@ -106,7 +106,7 @@ async function generateMerkleProof(deposit, contractAddress) {
         .sort((a, b) => Number(a.returnValues.leafIndex) - Number(b.returnValues.leafIndex))
         .map(e => e.returnValues.commitment);
     
-    const tree = new merkleTree(MERKLE_TREE_HEIGHT, leaves);
+    const tree = new MerkleTree(MERKLE_TREE_HEIGHT, leaves);
     
     // Find our deposit
     const depositEvent = events.find(e => e.returnValues.commitment === deposit.commitmentHex);
