@@ -28,7 +28,7 @@
     "snarkjs": "0.1.20",
     "circomlib": "0.0.20",
     "websnark": "0.0.4",
-    "fixed-merkle-tree": "^0.7.3",
+    "fixed-merkle-tree": "^0.6.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
