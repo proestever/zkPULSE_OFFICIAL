@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: zkpulse
+    runtime: node
+    buildCommand: npm install
+    startCommand: node frontend/unified-server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+    healthCheckPath: /
+    autoDeploy: true
