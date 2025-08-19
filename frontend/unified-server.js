@@ -12,7 +12,7 @@ const buildGroth16 = require('websnark/src/groth16');
 const websnarkUtils = require('websnark/src/utils');
 
 const app = express();
-const PORT = 8888;
+const PORT = process.env.PORT || 8888;
 
 // Middleware
 app.use(express.json());
