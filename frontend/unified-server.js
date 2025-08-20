@@ -18,6 +18,7 @@ const PORT = process.env.PORT || 8888;
 app.use(express.json());
 app.use(express.static(__dirname));
 app.use('/build', express.static(path.join(__dirname, '..', 'build')));
+app.use('/branding', express.static(path.join(__dirname, '..', 'branding')));
 
 // Web3 setup - Using WebSocket for faster event fetching
 const web3 = new Web3(new Web3.providers.WebsocketProvider('wss://rpc-pulsechain.g4mm4.io'));

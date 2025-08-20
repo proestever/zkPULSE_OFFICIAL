@@ -1,30 +1,36 @@
 {
   "name": "ZK Pulse Logo Assets",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "logos": {
     "primary": {
       "name": "ZK Pulse Main Banner",
-      "url": "https://github.com/proestever/Pulsechain_Tornado_Cash_zkPULSE/blob/main/branding/logos/zkbanner_main.png?raw=true",
+      "url": "/branding/logos/zkbanner_main.png",
+      "fileLocation": "branding/logos/zkbanner_main.png",
       "usage": "Main website header, documentation",
       "format": "PNG",
       "background": "Transparent",
-      "recommendedSize": "320px width"
+      "recommendedSize": "320px width",
+      "serving": "Self-hosted via Express static"
     },
     "favicon": {
       "name": "ZK Pulse Favicon",
-      "url": "https://github.com/proestever/Pulsechain_Tornado_Cash_zkPULSE/blob/main/branding/logos/zkpulse_favicon.png?raw=true",
+      "url": "/branding/logos/zkpulse_favicon.png",
+      "fileLocation": "branding/logos/zkpulse_favicon.png",
       "usage": "Browser favicon, app icons",
       "format": "PNG",
       "dimensions": "Square",
-      "minSize": "32x32px"
+      "minSize": "32x32px",
+      "serving": "Self-hosted via Express static"
     },
     "github": {
       "name": "GitHub Logo",
-      "url": "https://github.com/proestever/Pulsechain_Tornado_Cash_zkPULSE/blob/main/branding/logos/githublogo_zkpulse.png?raw=true",
+      "url": "/branding/logos/githublogo_zkpulse.png",
+      "fileLocation": "branding/logos/githublogo_zkpulse.png",
       "usage": "GitHub link button",
       "format": "PNG",
       "dimensions": "20x20px",
-      "color": "Matrix green variant"
+      "color": "Matrix green variant",
+      "serving": "Self-hosted via Express static"
     },
     "socialCard": {
       "name": "ZK Pulse Social Media Card",
