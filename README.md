@@ -27,8 +27,8 @@ ZK Pulse is a non-custodial privacy solution for PulseChain based on the battle-
 
 ```bash
 # Clone the repository
-git clone https://github.com/proestever/zkpulse.git
-cd zkpulse
+git clone https://github.com/proestever/Pulsechain_Tornado_Cash_zkPULSE.git
+cd Pulsechain_Tornado_Cash_zkPULSE
 
 # Install dependencies
 npm install
@@ -174,13 +174,24 @@ pm2 startup
 - **Field**: BN254 elliptic curve
 - **Dependencies**: snarkjs 0.1.20, circomlib 0.0.20
 
-## ⚠️ Disclaimer
+## ⚠️ Important Notices
 
+### Security Disclaimer
 This is experimental software. Use at your own risk. Always:
 - Save multiple backups of deposit notes
 - Test with small amounts first
 - Understand the risks of using privacy tools
 - Follow local regulations
+
+### Legal & Compliance
+- This software is provided for educational and research purposes
+- Users are responsible for complying with their local laws and regulations
+- The developers do not encourage or condone illegal activities
+- Privacy is a fundamental human right, but must be exercised responsibly
+
+### No Warranty
+This software is provided "as is" without warranty of any kind, express or implied.
+The developers are not responsible for any loss of funds or other damages.
 
 ## 📄 License
 
