@@ -561,7 +561,7 @@
         }
         
         /* Mobile support address handling */
-        #supportAddress span {
+        #supportAddress span, #contractAddress span {
             display: inline-block;
             white-space: nowrap;
             overflow: hidden;
@@ -583,12 +583,12 @@
             }
             
             /* Truncate support address on mobile */
-            #supportAddress {
+            #supportAddress, #contractAddress {
                 max-width: 90%;
                 margin: 0 auto;
             }
             
-            #supportAddress span {
+            #supportAddress span, #contractAddress span {
                 font-size: 11px !important;
                 letter-spacing: 0 !important;
             }
@@ -596,7 +596,7 @@
         
         @media (max-width: 480px) {
             /* Even smaller screens - show first and last parts only */
-            #supportAddress span {
+            #supportAddress span, #contractAddress span {
                 font-size: 10px !important;
             }
         }
@@ -771,6 +771,18 @@
                 </span>
                 <span id="copyTooltip" style="margin-left: 10px; color: #00ff41; font-size: 11px; display: none;"></span>
             </div>
+            
+            <!-- zkPULSE Contract Address -->
+            <p style="color: #a0a0a0; font-size: 12px; margin-top: 20px; margin-bottom: 8px;">zkPULSE Contract:</p>
+            <div id="contractAddress" style="display: inline-block; padding: 8px 16px; background: rgba(10, 10, 10, 0.7); border: 1px solid rgba(0, 255, 65, 0.2); border-radius: 8px; cursor: pointer; transition: all 0.3s;"
+                 onclick="copyContractAddress()"
+                 onmouseover="this.style.borderColor='#00ff41'; this.style.boxShadow='0 0 15px rgba(0, 255, 65, 0.3)';" 
+                 onmouseout="this.style.borderColor='rgba(0, 255, 65, 0.2)'; this.style.boxShadow='none';"> 
+                <span style="color: #00ff41; font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 0.5px;">
+                    0x8De9077B619DcBdA28edda4b8dC16538a59EFb49
+                </span>
+                <span id="contractTooltip" style="margin-left: 10px; color: #00ff41; font-size: 11px; display: none;"></span>
+            </div>
         </div>
     </div>
     
@@ -787,20 +799,32 @@
     <script>
         // Copy support address function
         // Format address for display based on screen width
+        // Format address for display based on screen width
         function formatAddressDisplay() {
-            const addressElement = document.querySelector('#supportAddress span');
-            const fullAddress = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
+            // Format support address
+            const supportElement = document.querySelector('#supportAddress span');
+            if (supportElement) {
+                const supportAddress = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
+                if (window.innerWidth <= 480) {
+                    supportElement.textContent = supportAddress.slice(0, 6) + '...' + supportAddress.slice(-4);
+                    supportElement.title = supportAddress;
+                } else {
+                    supportElement.textContent = supportAddress;
+                }
+            }
             
-            if (window.innerWidth <= 480) {
-                // Show abbreviated version on very small screens
-                addressElement.textContent = fullAddress.slice(0, 6) + '...' + fullAddress.slice(-4);
-                addressElement.title = fullAddress; // Show full address on hover/tap
-            } else {
-                // Show full address on larger screens
-                addressElement.textContent = fullAddress;
+            // Format contract address
+            const contractElement = document.querySelector('#contractAddress span');
+            if (contractElement) {
+                const contractAddress = '0x8De9077B619DcBdA28edda4b8dC16538a59EFb49';
+                if (window.innerWidth <= 480) {
+                    contractElement.textContent = contractAddress.slice(0, 6) + '...' + contractAddress.slice(-4);
+                    contractElement.title = contractAddress;
+                } else {
+                    contractElement.textContent = contractAddress;
+                }
             }
         }
-        
         function copySupportAddress() {
             const address = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
             navigator.clipboard.writeText(address).then(() => {
@@ -823,6 +847,38 @@
                 document.body.removeChild(textArea);
                 
                 const tooltip = document.getElementById('copyTooltip');
+                tooltip.style.display = 'inline';
+                tooltip.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                    tooltip.innerHTML = '';
+                }, 2000);
+            });
+        }
+        
+        // Copy contract address function
+        function copyContractAddress() {
+            const address = '0x8De9077B619DcBdA28edda4b8dC16538a59EFb49';
+            navigator.clipboard.writeText(address).then(() => {
+                const tooltip = document.getElementById('contractTooltip');
+                tooltip.style.display = 'inline';
+                tooltip.innerHTML = '✅ Copied!';
+                
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                    tooltip.innerHTML = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = address;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const tooltip = document.getElementById('contractTooltip');
                 tooltip.style.display = 'inline';
                 tooltip.innerHTML = '✅ Copied!';
                 setTimeout(() => {
