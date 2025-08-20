@@ -3,6 +3,7 @@ let userAccount;
 let selectedDenomination = null;
 let currentTab = 'deposit';
 let currentBottomTab = null; // No tab active by default
+let isTransactionPending = false; // Prevent double transactions
 
 // Initialize app
 window.addEventListener('load', async () => {
@@ -246,9 +247,21 @@ function selectDenomination(denom) {
 async function deposit() {
     if (!userAccount || !selectedDenomination) return;
     
+    // Prevent double transactions
+    if (isTransactionPending) {
+        showError('Transaction already in progress. Please wait...');
+        return;
+    }
+    
     let pendingId = null;
+    const depositBtn = document.getElementById('depositBtn');
+    const originalBtnText = depositBtn.innerText;
     
     try {
+        isTransactionPending = true;
+        depositBtn.disabled = true;
+        depositBtn.innerText = 'Transaction Pending...';
+        
         clearMessages();
         showLoading(true, 'Generating deposit commitment...');
         
@@ -361,6 +374,9 @@ ${CONFIG.explorerUrl}/tx/${tx.transactionHash}
         checkPendingDeposits();
     } finally {
         showLoading(false);
+        isTransactionPending = false;
+        depositBtn.disabled = false;
+        depositBtn.innerText = originalBtnText;
     }
 }
 
@@ -500,7 +516,22 @@ async function withdraw() {
         return;
     }
     
+    // Prevent double transactions
+    if (isTransactionPending) {
+        showError('Transaction already in progress. Please wait...');
+        return;
+    }
+    
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    const originalBtnText = withdrawBtn ? withdrawBtn.innerText : 'Withdraw';
+    
     try {
+        isTransactionPending = true;
+        if (withdrawBtn) {
+            withdrawBtn.disabled = true;
+            withdrawBtn.innerText = 'Transaction Pending...';
+        }
+        
         clearMessages();
         
         // Step 1: Generate proof (before any wallet interaction)
@@ -536,6 +567,11 @@ async function withdraw() {
         showMessage(`Withdrawal failed: ${error.message}`, 'warning');
     } finally {
         showLoading(false);
+        isTransactionPending = false;
+        if (withdrawBtn) {
+            withdrawBtn.disabled = false;
+            withdrawBtn.innerText = originalBtnText;
+        }
     }
 }
 
