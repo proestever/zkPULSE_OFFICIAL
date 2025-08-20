@@ -53,7 +53,18 @@
             padding: 20px;
             color: #e0e0e0;
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        /* Hide scrollbar for all browsers */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        
+        body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
         
         #matrix-bg {
