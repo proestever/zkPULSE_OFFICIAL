@@ -560,6 +560,15 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
+        /* Mobile support address handling */
+        #supportAddress span {
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
         @media (max-width: 768px) {
             .network-info {
                 top: 10px;
@@ -571,6 +580,24 @@
             
             .container {
                 margin-top: 60px;
+            }
+            
+            /* Truncate support address on mobile */
+            #supportAddress {
+                max-width: 90%;
+                margin: 0 auto;
+            }
+            
+            #supportAddress span {
+                font-size: 11px !important;
+                letter-spacing: 0 !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Even smaller screens - show first and last parts only */
+            #supportAddress span {
+                font-size: 10px !important;
             }
         }
     </style>
@@ -753,6 +780,21 @@
     <!-- Matrix Background Animation Script -->
     <script>
         // Copy support address function
+        // Format address for display based on screen width
+        function formatAddressDisplay() {
+            const addressElement = document.querySelector('#supportAddress span');
+            const fullAddress = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
+            
+            if (window.innerWidth <= 480) {
+                // Show abbreviated version on very small screens
+                addressElement.textContent = fullAddress.slice(0, 6) + '...' + fullAddress.slice(-4);
+                addressElement.title = fullAddress; // Show full address on hover/tap
+            } else {
+                // Show full address on larger screens
+                addressElement.textContent = fullAddress;
+            }
+        }
+        
         function copySupportAddress() {
             const address = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
             navigator.clipboard.writeText(address).then(() => {
@@ -913,6 +955,10 @@
             
             requestAnimationFrame(animate);
         }
+        
+        // Initialize address display
+        formatAddressDisplay();
+        window.addEventListener('resize', formatAddressDisplay);
         
         // Start animation
         animate();
