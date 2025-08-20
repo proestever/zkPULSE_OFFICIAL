@@ -1,6 +1,6 @@
 # ZK Pulse - Privacy Mixer for PulseChain
 
-![ZK Pulse Logo](https://i.ibb.co/wZqLV5gf/zkpulse-full-logo.png)
+![ZK Pulse Logo](https://i.ibb.co/VpBjKyct/zkpulselogo2.png)
 
 ## 🔒 Privacy for PulseChain using Zero-Knowledge Proofs
 
