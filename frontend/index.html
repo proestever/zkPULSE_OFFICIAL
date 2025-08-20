@@ -736,7 +736,7 @@
                 <span style="color: #00ff41; font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 0.5px;">
                     0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB
                 </span>
-                <span id="copyTooltip" style="margin-left: 10px; color: #a0a0a0; font-size: 11px;">📋 Click to copy</span>
+                <span id="copyTooltip" style="margin-left: 10px; color: #00ff41; font-size: 11px; display: none;"></span>
             </div>
         </div>
     </div>
@@ -757,13 +757,12 @@
             const address = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
             navigator.clipboard.writeText(address).then(() => {
                 const tooltip = document.getElementById('copyTooltip');
-                const originalText = tooltip.innerHTML;
+                tooltip.style.display = 'inline';
                 tooltip.innerHTML = '✅ Copied!';
-                tooltip.style.color = '#00ff41';
                 
                 setTimeout(() => {
-                    tooltip.innerHTML = originalText;
-                    tooltip.style.color = '#a0a0a0';
+                    tooltip.style.display = 'none';
+                    tooltip.innerHTML = '';
                 }, 2000);
             }).catch(err => {
                 console.error('Failed to copy:', err);
@@ -776,11 +775,11 @@
                 document.body.removeChild(textArea);
                 
                 const tooltip = document.getElementById('copyTooltip');
+                tooltip.style.display = 'inline';
                 tooltip.innerHTML = '✅ Copied!';
-                tooltip.style.color = '#00ff41';
                 setTimeout(() => {
-                    tooltip.innerHTML = '📋 Click to copy';
-                    tooltip.style.color = '#a0a0a0';
+                    tooltip.style.display = 'none';
+                    tooltip.innerHTML = '';
                 }, 2000);
             });
         }
