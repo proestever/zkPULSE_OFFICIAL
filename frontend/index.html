@@ -725,6 +725,20 @@
                 GitHub
             </a>
         </div>
+        
+        <!-- Support/Donation Address -->
+        <div style="text-align: center; margin-top: 10px; margin-bottom: 30px;">
+            <p style="color: #a0a0a0; font-size: 12px; margin-bottom: 8px;">Support us at:</p>
+            <div id="supportAddress" style="display: inline-block; padding: 8px 16px; background: rgba(10, 10, 10, 0.7); border: 1px solid rgba(0, 255, 65, 0.2); border-radius: 8px; cursor: pointer; transition: all 0.3s;"
+                 onclick="copySupportAddress()"
+                 onmouseover="this.style.borderColor='#00ff41'; this.style.boxShadow='0 0 15px rgba(0, 255, 65, 0.3)';"
+                 onmouseout="this.style.borderColor='rgba(0, 255, 65, 0.2)'; this.style.boxShadow='none';">
+                <span style="color: #00ff41; font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 0.5px;">
+                    0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB
+                </span>
+                <span id="copyTooltip" style="margin-left: 10px; color: #a0a0a0; font-size: 11px;">📋 Click to copy</span>
+            </div>
+        </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
@@ -738,6 +752,40 @@
     
     <!-- Matrix Background Animation Script -->
     <script>
+        // Copy support address function
+        function copySupportAddress() {
+            const address = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
+            navigator.clipboard.writeText(address).then(() => {
+                const tooltip = document.getElementById('copyTooltip');
+                const originalText = tooltip.innerHTML;
+                tooltip.innerHTML = '✅ Copied!';
+                tooltip.style.color = '#00ff41';
+                
+                setTimeout(() => {
+                    tooltip.innerHTML = originalText;
+                    tooltip.style.color = '#a0a0a0';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = address;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const tooltip = document.getElementById('copyTooltip');
+                tooltip.innerHTML = '✅ Copied!';
+                tooltip.style.color = '#00ff41';
+                setTimeout(() => {
+                    tooltip.innerHTML = '📋 Click to copy';
+                    tooltip.style.color = '#a0a0a0';
+                }, 2000);
+            });
+        }
+        
+        // Animated background
         const canvas = document.getElementById('matrix-bg');
         const ctx = canvas.getContext('2d');
         
