@@ -100,13 +100,32 @@ function toggleWallet() {
 }
 
 // Update wallet button display
-function updateWalletButton() {
+async function updateWalletButton() {
     const button = document.getElementById('walletButton');
     const buttonText = document.getElementById('walletButtonText');
     
     if (userAccount) {
         button.classList.add('connected');
-        buttonText.textContent = `${userAccount.substring(0, 6)}...${userAccount.substring(38)}`;
+        buttonText.innerHTML = `${userAccount.substring(0, 6)}...${userAccount.substring(38)}`;
+        
+        // Fetch and display balance
+        try {
+            const balance = await web3.eth.getBalance(userAccount);
+            const balanceInPLS = parseFloat(web3.utils.fromWei(balance, 'ether'));
+            const formattedBalance = balanceInPLS.toLocaleString('en-US', { 
+                minimumFractionDigits: 2, 
+                maximumFractionDigits: 4 
+            });
+            
+            // Add balance below address
+            buttonText.innerHTML = `
+                <div>${userAccount.substring(0, 6)}...${userAccount.substring(38)}</div>
+                <div style="font-size: 11px; color: #00ff41; margin-top: 2px;">${formattedBalance} PLS</div>
+            `;
+        } catch (error) {
+            console.error('Error fetching balance:', error);
+            buttonText.textContent = `${userAccount.substring(0, 6)}...${userAccount.substring(38)}`;
+        }
     } else {
         button.classList.remove('connected');
         buttonText.textContent = 'Connect Wallet';
@@ -365,6 +384,7 @@ ${CONFIG.explorerUrl}/tx/${tx.transactionHash}
         }));
         
         updateStats();
+        updateWalletButton(); // Update balance after deposit
         
     } catch (error) {
         console.error('Deposit error:', error);
@@ -561,6 +581,7 @@ async function withdraw() {
         
         // Update stats
         updateStats();
+        updateWalletButton(); // Update balance after withdrawal
         
     } catch (error) {
         console.error('Withdraw error:', error);
