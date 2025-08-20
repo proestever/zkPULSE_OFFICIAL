@@ -1,22 +1,30 @@
 {
   "name": "ZK Pulse Logo Assets",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "logos": {
     "primary": {
-      "name": "ZK Pulse Main Logo",
-      "url": "https://i.ibb.co/VpBjKyct/zkpulselogo2.png",
+      "name": "ZK Pulse Main Banner",
+      "url": "https://github.com/proestever/Pulsechain_Tornado_Cash_zkPULSE/blob/main/branding/logos/zkbanner_main.png?raw=true",
       "usage": "Main website header, documentation",
       "format": "PNG",
       "background": "Transparent",
-      "recommendedSize": "240px width"
+      "recommendedSize": "320px width"
     },
     "favicon": {
       "name": "ZK Pulse Favicon",
-      "url": "https://i.ibb.co/hv4t7hG/logo1.png",
+      "url": "https://github.com/proestever/Pulsechain_Tornado_Cash_zkPULSE/blob/main/branding/logos/zkpulse_favicon.png?raw=true",
       "usage": "Browser favicon, app icons",
       "format": "PNG",
       "dimensions": "Square",
       "minSize": "32x32px"
+    },
+    "github": {
+      "name": "GitHub Logo",
+      "url": "https://github.com/proestever/Pulsechain_Tornado_Cash_zkPULSE/blob/main/branding/logos/githublogo_zkpulse.png?raw=true",
+      "usage": "GitHub link button",
+      "format": "PNG",
+      "dimensions": "20x20px",
+      "color": "Matrix green variant"
     },
     "socialCard": {
       "name": "ZK Pulse Social Media Card",
