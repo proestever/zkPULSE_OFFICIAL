@@ -504,6 +504,27 @@
             margin-bottom: 20px;
         }
         
+        /* Loading animation for stats */
+        @keyframes pulse-loading {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        
+        .loading-dots {
+            display: inline-block;
+            color: #00ff41;
+            animation: pulse-loading 1.5s ease-in-out infinite;
+        }
+        
+        .loading-dots::after {
+            content: '...';
+            animation: pulse-loading 1.5s ease-in-out infinite;
+        }
+        
         .bottom-tab {
             flex: 1;
             padding: 10px;
@@ -654,35 +675,35 @@
                     <div class="stat-row">
                         <div class="stat-denomination">1M PLS</div>
                         <div class="stat-info">
-                            <span class="stat-deposits" id="deposits-1M">0 deposits</span>
+                            <span class="stat-deposits" id="deposits-1M"><span class="loading-dots">Loading</span></span>
                             <span class="stat-balance" id="balance-1M">0 PLS</span>
                         </div>
                     </div>
                     <div class="stat-row">
                         <div class="stat-denomination">10M PLS</div>
                         <div class="stat-info">
-                            <span class="stat-deposits" id="deposits-10M">0 deposits</span>
+                            <span class="stat-deposits" id="deposits-10M"><span class="loading-dots">Loading</span></span>
                             <span class="stat-balance" id="balance-10M">0 PLS</span>
                         </div>
                     </div>
                     <div class="stat-row">
                         <div class="stat-denomination">100M PLS</div>
                         <div class="stat-info">
-                            <span class="stat-deposits" id="deposits-100M">0 deposits</span>
+                            <span class="stat-deposits" id="deposits-100M"><span class="loading-dots">Loading</span></span>
                             <span class="stat-balance" id="balance-100M">0 PLS</span>
                         </div>
                     </div>
                     <div class="stat-row">
                         <div class="stat-denomination">1B PLS</div>
                         <div class="stat-info">
-                            <span class="stat-deposits" id="deposits-1B">0 deposits</span>
+                            <span class="stat-deposits" id="deposits-1B"><span class="loading-dots">Loading</span></span>
                             <span class="stat-balance" id="balance-1B">0 PLS</span>
                         </div>
                     </div>
                     <div class="stat-row total">
                         <div class="stat-denomination">Total</div>
                         <div class="stat-info">
-                            <span class="stat-deposits" id="deposits-total">0 deposits</span>
+                            <span class="stat-deposits" id="deposits-total"><span class="loading-dots">Loading</span></span>
                             <span class="stat-balance" id="balance-total">0 PLS</span>
                         </div>
                     </div>
@@ -690,14 +711,14 @@
             </div>
         </div>
         
-        <!-- Documentation and GitHub Links -->
-        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px; display: flex; gap: 15px; justify-content: center; align-items: center;">
-            <a href="docs.html" style="color: #00ff41; text-decoration: none; padding: 10px 20px; border: 1px solid #00ff41; border-radius: 8px; display: inline-block; background: rgba(0, 0, 0, 0.5); transition: all 0.3s; font-size: 14px; font-weight: 500; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);" 
+        <!-- Docs and GitHub Links -->
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px; display: flex; gap: 15px; justify-content: center; align-items: stretch;">
+            <a href="docs.html" style="color: #00ff41; text-decoration: none; padding: 10px 20px; border: 1px solid #00ff41; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.5); transition: all 0.3s; font-size: 14px; font-weight: 500; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); height: 40px;" 
                onmouseover="this.style.background='rgba(0, 255, 65, 0.1)'; this.style.boxShadow='0 0 25px rgba(0, 255, 65, 0.4)';" 
                onmouseout="this.style.background='rgba(0, 0, 0, 0.5)'; this.style.boxShadow='0 0 15px rgba(0, 255, 65, 0.2)';">
-                📖 Documentation
+                📖 Docs
             </a>
-            <a href="https://github.com/proestever/Pulsechain_Tornado_Cash_zkPULSE" target="_blank" style="color: #00ff41; text-decoration: none; padding: 10px 20px; border: 1px solid #00ff41; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.5); transition: all 0.3s; font-size: 14px; font-weight: 500; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);" 
+            <a href="https://github.com/proestever/Pulsechain_Tornado_Cash_zkPULSE" target="_blank" style="color: #00ff41; text-decoration: none; padding: 10px 20px; border: 1px solid #00ff41; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.5); transition: all 0.3s; font-size: 14px; font-weight: 500; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); height: 40px;" 
                onmouseover="this.style.background='rgba(0, 255, 65, 0.1)'; this.style.boxShadow='0 0 25px rgba(0, 255, 65, 0.4)';" 
                onmouseout="this.style.background='rgba(0, 0, 0, 0.5)'; this.style.boxShadow='0 0 15px rgba(0, 255, 65, 0.2)';">
                 <img src="/branding/logos/githublogo_zkpulse.png" alt="GitHub" style="width: 20px; height: 20px;">

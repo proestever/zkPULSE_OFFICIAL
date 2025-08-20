@@ -2,6 +2,15 @@
 async function updateEnhancedStats() {
     console.log('Updating enhanced Tornado Cash statistics...');
     
+    // Show loading state for all stats
+    const denominations = ['1M', '10M', '100M', '1B', 'total'];
+    denominations.forEach(denom => {
+        const element = document.getElementById(`deposits-${denom}`);
+        if (element) {
+            element.innerHTML = '<span class="loading-dots">Loading</span>';
+        }
+    });
+    
     // Initialize web3 if not already done
     if (typeof web3 === 'undefined' || !web3) {
         if (typeof Web3 !== 'undefined') {
