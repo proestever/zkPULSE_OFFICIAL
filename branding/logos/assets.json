@@ -1,0 +1,56 @@
+{
+  "name": "ZK Pulse Logo Assets",
+  "version": "1.0.0",
+  "logos": {
+    "primary": {
+      "name": "ZK Pulse Main Logo",
+      "url": "https://i.ibb.co/VpBjKyct/zkpulselogo2.png",
+      "usage": "Main website header, documentation",
+      "format": "PNG",
+      "background": "Transparent",
+      "recommendedSize": "240px width"
+    },
+    "favicon": {
+      "name": "ZK Pulse Favicon",
+      "url": "https://i.ibb.co/hv4t7hG/logo1.png",
+      "usage": "Browser favicon, app icons",
+      "format": "PNG",
+      "dimensions": "Square",
+      "minSize": "32x32px"
+    },
+    "socialCard": {
+      "name": "ZK Pulse Social Media Card",
+      "url": "https://i.ibb.co/XZqSBcS2/zkfork.png",
+      "usage": "OpenGraph, Twitter Cards, Social Sharing",
+      "format": "PNG",
+      "dimensions": "1200x630px",
+      "platforms": ["Twitter", "Facebook", "LinkedIn", "Discord", "Telegram"]
+    },
+    "alternativeFull": {
+      "name": "ZK Pulse Alternative Logo",
+      "url": "https://i.ibb.co/wZqLV5gf/zkpulse-full-logo.png",
+      "usage": "Alternative version, different contexts",
+      "format": "PNG",
+      "background": "Transparent"
+    },
+    "plsToken": {
+      "name": "PLS Token Logo",
+      "url": "https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png",
+      "usage": "Display next to PLS amounts",
+      "format": "PNG",
+      "dimensions": "20x20px typical",
+      "source": "PulseX official"
+    }
+  },
+  "guidelines": {
+    "clearSpace": "Minimum 20px around logos",
+    "minHeight": "32px for readability",
+    "backgrounds": "Optimized for dark backgrounds (#000000 to #0a0a0a)",
+    "doNot": [
+      "Stretch or distort logos",
+      "Change logo colors",
+      "Add effects not in brand guidelines",
+      "Use on busy backgrounds without proper contrast"
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "ZK Pulse Color Palette",
+  "version": "1.0.0",
+  "colors": {
+    "primary": {
+      "matrixGreen": "#00ff41",
+      "matrixGreenRGB": "rgb(0, 255, 65)",
+      "matrixGreenHSL": "hsl(135, 100%, 50%)"
+    },
+    "background": {
+      "black": "#000000",
+      "darkGray": "#0a0a0a",
+      "cardBackground": "rgba(10, 10, 10, 0.7)",
+      "transparentDark": "rgba(10, 10, 10, 0.5)"
+    },
+    "text": {
+      "primary": "#e0e0e0",
+      "secondary": "#a0a0a0",
+      "muted": "#808080"
+    },
+    "status": {
+      "error": "#ff0033",
+      "errorHover": "#ff3366",
+      "warning": "#ffaa00",
+      "success": "#00ff41"
+    },
+    "borders": {
+      "subtle": "rgba(255, 255, 255, 0.05)",
+      "default": "rgba(255, 255, 255, 0.1)",
+      "active": "#00ff41"
+    },
+    "effects": {
+      "glowGreen": "0 0 20px rgba(0, 255, 65, 0.3)",
+      "glowGreenStrong": "0 0 30px rgba(0, 255, 65, 0.5)",
+      "textShadow": "0 0 10px rgba(0, 255, 65, 0.8)",
+      "innerGlow": "inset 0 0 20px rgba(0, 255, 65, 0.1)"
+    }
+  }
+}
