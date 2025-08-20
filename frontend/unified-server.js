@@ -19,8 +19,8 @@ app.use(express.json());
 app.use(express.static(__dirname));
 app.use('/build', express.static(path.join(__dirname, '..', 'build')));
 
-// Web3 setup
-const web3 = new Web3('https://rpc.pulsechain.com');
+// Web3 setup - Using WebSocket for faster event fetching
+const web3 = new Web3(new Web3.providers.WebsocketProvider('wss://rpc-pulsechain.g4mm4.io'));
 
 // All deployed contracts
 const CONTRACTS = {
@@ -96,11 +96,16 @@ async function generateMerkleProof(deposit, contractAddress) {
     const contractJson = require('../build/contracts/ETHTornado.json');
     const tornado = new web3.eth.Contract(contractJson.abi, contractAddress);
     
-    // Get all deposit events
+    console.log('Fetching deposit events via WebSocket...');
+    const startTime = Date.now();
+    
+    // Get all deposit events - WebSocket is much faster for this
     const events = await tornado.getPastEvents('Deposit', { 
         fromBlock: 0, 
         toBlock: 'latest' 
     });
+    
+    console.log(`Fetched ${events.length} events in ${Date.now() - startTime}ms`);
     
     const leaves = events
         .sort((a, b) => Number(a.returnValues.leafIndex) - Number(b.returnValues.leafIndex))
@@ -387,6 +392,20 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// WebSocket reconnection handling
+web3.currentProvider.on('connect', () => {
+    console.log('✅ WebSocket connected to PulseChain');
+});
+
+web3.currentProvider.on('error', (error) => {
+    console.error('WebSocket error:', error);
+});
+
+web3.currentProvider.on('end', () => {
+    console.log('WebSocket disconnected, attempting to reconnect...');
+    // Provider will auto-reconnect
+});
+
 // Initialize and start
 async function start() {
     await initCircuits();
@@ -398,7 +417,7 @@ async function start() {
     ========================================
     
     Running at: http://localhost:${PORT}
-    Network: PulseChain
+    Network: PulseChain (WebSocket)
     
     All Deployed Contracts:
     - 1 PLS:     ${CONTRACTS['1']}
