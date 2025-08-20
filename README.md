@@ -27,7 +27,7 @@ ZK Pulse is a non-custodial privacy solution for PulseChain based on the battle-
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/zkpulse.git
+git clone https://github.com/proestever/zkpulse.git
 cd zkpulse
 
 # Install dependencies
