@@ -12,14 +12,14 @@
     
     <!-- Primary Meta Tags -->
     <meta name="title" content="ZK Pulse - Private Transactions on PulseChain">
-    <meta name="description" content="ZK Pulse is the premier privacy protocol on PulseChain. Send and receive PLS with complete anonymity using zero-knowledge proofs. Non-custodial, decentralized, and fully on-chain.">
-    <meta name="keywords" content="PulseChain, privacy, mixer, zero-knowledge proofs, ZK-SNARKs, cryptocurrency, DeFi, anonymous transactions, tornado cash, blockchain privacy">
+    <meta name="description" content="ZK Pulse is the premier privacy protocol on PulseChain. Send and receive PLS and tokens with complete anonymity using zero-knowledge proofs. Non-custodial, decentralized, and fully on-chain.">
+    <meta name="keywords" content="PulseChain, privacy, mixer, zero-knowledge proofs, ZK-SNARKs, cryptocurrency, DeFi, anonymous transactions, tornado cash, blockchain privacy, PCOCK">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://zkpulse.app/">
     <meta property="og:title" content="ZK Pulse - Private Transactions on PulseChain">
-    <meta property="og:description" content="Send and receive PLS with complete anonymity. The premier privacy protocol on PulseChain using zero-knowledge proofs.">
+    <meta property="og:description" content="Send and receive PLS and tokens with complete anonymity. The premier privacy protocol on PulseChain using zero-knowledge proofs.">
     <meta property="og:image" content="https://i.ibb.co/XZqSBcS2/zkfork.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -28,7 +28,7 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://zkpulse.app/">
     <meta property="twitter:title" content="ZK Pulse - Private Transactions on PulseChain">
-    <meta property="twitter:description" content="Send and receive PLS with complete anonymity. The premier privacy protocol on PulseChain using zero-knowledge proofs.">
+    <meta property="twitter:description" content="Send and receive PLS and tokens with complete anonymity. The premier privacy protocol on PulseChain using zero-knowledge proofs.">
     <meta property="twitter:image" content="https://i.ibb.co/XZqSBcS2/zkfork.png">
     
     <!-- Additional Meta Tags -->
@@ -146,6 +146,70 @@
             border-color: #ff0033;
             color: #ff3366;
             box-shadow: 0 0 20px rgba(255, 0, 51, 0.3);
+        }
+        
+        /* Token Selector Styles */
+        .token-selector {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .token-buttons {
+            display: inline-flex;
+            gap: 10px;
+            padding: 5px;
+            background: rgba(10, 10, 10, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 65, 0.2);
+        }
+        
+        .token-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 8px;
+            color: #a0a0a0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .token-btn:hover {
+            background: rgba(0, 255, 65, 0.05);
+            border-color: rgba(0, 255, 65, 0.5);
+            color: #e0e0e0;
+        }
+        
+        .token-btn.active {
+            background: rgba(0, 255, 65, 0.1);
+            border-color: #00ff41;
+            color: #00ff41;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        }
+        
+        .token-btn img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        
+        /* Balance Display */
+        #balanceDisplay {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            background: rgba(10, 10, 10, 0.7);
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            color: #00ff41;
+            font-size: 12px;
+            z-index: 999;
+            backdrop-filter: blur(10px);
         }
         
         .tabs {
@@ -592,6 +656,13 @@
                 font-size: 11px !important;
                 letter-spacing: 0 !important;
             }
+            
+            #balanceDisplay {
+                top: 55px;
+                right: 10px;
+                font-size: 11px;
+                padding: 6px 12px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -611,6 +682,8 @@
         <span id="walletButtonText">Connect Wallet</span>
     </div>
     
+    <!-- Balance Display (appears after wallet connection) -->
+    
     <div class="container">
         <img src="/branding/logos/zkbanner_main.png" alt="ZK Pulse" style="width: 100%; max-width: 320px; height: auto; margin: 15px auto 25px auto; padding: 5px; display: block;">
         
@@ -620,24 +693,23 @@
         </div>
         
         <div id="depositTab">
+            <!-- Token Selector -->
+            <div class="token-selector">
+                <div class="token-buttons">
+                    <button class="token-btn active" onclick="selectToken('PLS')" id="token-PLS">
+                        <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS">
+                        PLS
+                    </button>
+                    <button class="token-btn" onclick="selectToken('PCOCK')" id="token-PCOCK">
+                        <img src="https://tokens.app.pulsex.com/images/tokens/0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F.png" alt="PCOCK">
+                        PCOCK
+                    </button>
+                </div>
+            </div>
+            
             <h3 style="margin-bottom: 15px;">Select Amount</h3>
-            <div class="denomination-grid">
-                <div class="denomination-card" onclick="selectDenomination('1M')">
-                    <div class="denomination-amount">1M</div>
-                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                </div>
-                <div class="denomination-card" onclick="selectDenomination('10M')">
-                    <div class="denomination-amount">10M</div>
-                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                </div>
-                <div class="denomination-card" onclick="selectDenomination('100M')">
-                    <div class="denomination-amount">100M</div>
-                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                </div>
-                <div class="denomination-card" onclick="selectDenomination('1B')">
-                    <div class="denomination-amount">1B</div>
-                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                </div>
+            <div class="denomination-grid" id="denominationGrid">
+                <!-- Denomination cards will be dynamically populated -->
             </div>
             
             <button class="button" onclick="deposit()" id="depositBtn" disabled>
@@ -654,7 +726,7 @@
         <div id="withdrawTab" class="hidden">
             <div class="input-group">
                 <label>Note from Deposit</label>
-                <input type="text" id="withdrawNote" placeholder="tornado-pls-1M-369-0x..." />
+                <input type="text" id="withdrawNote" placeholder="tornado-pls-1M-369-0x... or tornado-pcock-10k-369-0x..." />
             </div>
             
             <div class="input-group">
@@ -698,42 +770,8 @@
             <!-- Network Stats Tab -->
             <div id="statsTab" class="bottom-content hidden">
                 <h3 style="margin-bottom: 15px; color: #e0e0e0;">Contract Statistics</h3>
-                <div class="stats-list">
-                    <div class="stat-row">
-                        <div class="stat-denomination">1M PLS</div>
-                        <div class="stat-info">
-                            <span class="stat-deposits" id="deposits-1M"><span class="loading-dots">Loading</span></span>
-                            <span class="stat-balance" id="balance-1M">0 PLS</span>
-                        </div>
-                    </div>
-                    <div class="stat-row">
-                        <div class="stat-denomination">10M PLS</div>
-                        <div class="stat-info">
-                            <span class="stat-deposits" id="deposits-10M"><span class="loading-dots">Loading</span></span>
-                            <span class="stat-balance" id="balance-10M">0 PLS</span>
-                        </div>
-                    </div>
-                    <div class="stat-row">
-                        <div class="stat-denomination">100M PLS</div>
-                        <div class="stat-info">
-                            <span class="stat-deposits" id="deposits-100M"><span class="loading-dots">Loading</span></span>
-                            <span class="stat-balance" id="balance-100M">0 PLS</span>
-                        </div>
-                    </div>
-                    <div class="stat-row">
-                        <div class="stat-denomination">1B PLS</div>
-                        <div class="stat-info">
-                            <span class="stat-deposits" id="deposits-1B"><span class="loading-dots">Loading</span></span>
-                            <span class="stat-balance" id="balance-1B">0 PLS</span>
-                        </div>
-                    </div>
-                    <div class="stat-row total">
-                        <div class="stat-denomination">Total</div>
-                        <div class="stat-info">
-                            <span class="stat-deposits" id="deposits-total"><span class="loading-dots">Loading</span></span>
-                            <span class="stat-balance" id="balance-total">0 PLS</span>
-                        </div>
-                    </div>
+                <div class="stats-list" id="statsContainer">
+                    <!-- Stats will be dynamically populated based on selected token -->
                 </div>
             </div>
         </div>
@@ -788,11 +826,13 @@
     
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
     <script src="config-all-denominations.js"></script>
+    <script src="config-pcock.js"></script>
     <script src="tornado-api.js"></script>
     <script src="withdrawal-complete.js"></script>
     <script src="deposit-tracker.js"></script>
     <script src="deposit-recovery.js"></script>
     <script src="app-complete.js"></script>
+    <script src="app-with-tokens.js"></script>
     <script src="enhanced-stats.js"></script>
     
     <!-- Matrix Background Animation Script -->
