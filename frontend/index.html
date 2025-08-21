@@ -1238,10 +1238,11 @@
                 const secret = rbigint(31);
                 
                 // Simple commitment calculation (for emergency fallback)
-                const commitmentBigInt = BigInt(web3.utils.soliditySha3(
+                const hash = web3.utils.soliditySha3(
                     {t: 'uint256', v: nullifier.toString()},
                     {t: 'uint256', v: secret.toString()}
-                ).slice(2), 16);
+                );
+                const commitmentBigInt = BigInt('0x' + hash.slice(2));
                 
                 const noteHex = nullifier.toString(16).padStart(62, '0') + secret.toString(16).padStart(62, '0');
                 
