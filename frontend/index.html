@@ -939,6 +939,7 @@
     <script src="deposit-recovery.js"></script>
     <script src="app-complete.js"></script>
     <script src="enhanced-stats.js"></script>
+    <script src="pcock-withdrawal-fix.js"></script>
     
     <!-- Matrix Background Animation Script -->
     <script>
@@ -1255,7 +1256,10 @@
                     commitmentBigInt = BigInt(1);
                 }
                 
-                const noteHex = nullifier.toString(16).padStart(62, '0') + secret.toString(16).padStart(62, '0');
+                // CRITICAL FIX: Ensure note is exactly 31 bytes for each part
+                const nullifierHex = nullifier.toString(16).padStart(62, '0').slice(-62);
+                const secretHex = secret.toString(16).padStart(62, '0').slice(-62);
+                const noteHex = nullifierHex + secretHex;
                 
                 deposit = {
                     nullifier,
