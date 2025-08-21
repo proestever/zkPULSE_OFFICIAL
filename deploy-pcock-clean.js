@@ -6,7 +6,7 @@ require('dotenv').config();
 
 // Configuration
 const RPC_URL = 'https://rpc.pulsechain.com';
-let PRIVATE_KEY = process.env.PRIVATE_KEY || '27b58696769804b277c405f11608e4534a1cf3415ff7cbb9a6f052872a9f52d3';
+let PRIVATE_KEY = process.env.PRIVATE_KEY;
 if (!PRIVATE_KEY.startsWith('0x')) {
     PRIVATE_KEY = '0x' + PRIVATE_KEY;
 }

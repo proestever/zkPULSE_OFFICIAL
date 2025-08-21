@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PCOCK Withdrawal Helper</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .value { background: #f0f0f0; padding: 5px; margin: 5px 0; word-break: break-all; }
+        button { padding: 10px 20px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>PCOCK Withdrawal Helper</h1>
+    <h2>Your Deposit Details</h2>
+    <p><strong>Status:</strong> ✅ 10,000 PCOCK confirmed in contract</p>
+    <p><strong>Commitment:</strong></p>
+    <div class="value">0x02e990c5f3a6e61efb53739715d1a32ea32a46a826b895af7c658f36ca1ac965</div>
+    <p><strong>Leaf Index:</strong> 0</p>
+    
+    <h2>Withdrawal Instructions</h2>
+    <p>Your note (copy this exactly):</p>
+    <div class="value" id="note">tornado-pcock-10k-369-739044633c825ad6b156018fab14852f0e89ecb8abe581a8a2ac30bd53d645509ded69872f83a38680c30a2273c73471e8ad788a329af4768399fa1f89c9</div>
+    <button onclick="copyNote()">Copy Note</button>
+    
+    <p>Recipient address:</p>
+    <div class="value">0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB</div>
+    
+    <h2>Manual Withdrawal Values</h2>
+    <p>If the web interface doesn't work, use these values:</p>
+    <p><strong>Nullifier:</strong></p>
+    <div class="value">0x739044633c825ad6b156018fab14852f0e89ecb8abe581a8a2ac30bd53d645</div>
+    <p><strong>Secret:</strong></p>
+    <div class="value">0x509ded69872f83a38680c30a2273c73471e8ad788a329af4768399fa1f89c9</div>
+    <p><strong>Root:</strong></p>
+    <div class="value">0x25dda1581a1690fde3348f45ef2c72bc506c3db2f618e9492d241053deeb7fbc</div>
+    
+    <script>
+        function copyNote() {
+            const note = document.getElementById('note').innerText;
+            navigator.clipboard.writeText(note);
+            alert('Note copied to clipboard!');
+        }
+    </script>
+</body>
+</html>
