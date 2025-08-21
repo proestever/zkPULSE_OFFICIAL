@@ -898,6 +898,36 @@
         
         // Alias for compatibility
         window.selectToken = window.selectTokenNow;
+        
+        // Also define selectDenomination globally so it works for all cards
+        window.selectDenomination = function(denom) {
+            selectedDenomination = denom;
+            window.selectedDenomination = denom;
+            
+            // Update UI to show selected
+            document.querySelectorAll('.denomination-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Find and select the clicked card
+            event.currentTarget.classList.add('selected');
+            
+            // Update deposit button
+            const btn = document.getElementById('depositBtn');
+            if (btn && userAccount) {
+                const tokenSymbol = window.selectedToken || 'PLS';
+                btn.textContent = `Deposit ${denom} ${tokenSymbol}`;
+                btn.disabled = false;
+            } else if (btn) {
+                btn.textContent = userAccount ? `Deposit ${denom} ${window.selectedToken || 'PLS'}` : 'Connect Wallet First';
+                btn.disabled = !userAccount;
+            }
+            
+            // Call existing updateDepositButton if it exists
+            if (typeof updateDepositButton === 'function') {
+                updateDepositButton();
+            }
+        };
     </script>
     <script src="config-all-denominations.js"></script>
     <script src="config-pcock.js"></script>
