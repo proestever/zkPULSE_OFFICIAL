@@ -696,11 +696,11 @@
             <!-- Token Selector -->
             <div class="token-selector">
                 <div class="token-buttons">
-                    <button class="token-btn active" id="token-PLS" style="border: none; outline: none;">
+                    <button class="token-btn active" id="token-PLS" onclick="selectTokenNow('PLS')" style="border: none; outline: none;">
                         <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS">
                         PLS
                     </button>
-                    <button class="token-btn" id="token-PCOCK" style="border: none; outline: none;">
+                    <button class="token-btn" id="token-PCOCK" onclick="selectTokenNow('PCOCK')" style="border: none; outline: none;">
                         <img src="/branding/logos/peacocklogo.webp" alt="PCOCK" onerror="this.src='https://tokens.app.pulsex.com/images/tokens/0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F.png'">
                         PCOCK
                     </button>
@@ -851,11 +851,61 @@
     
     <!-- Matrix Background Animation Script -->
     <script>
-        // Define selectToken function immediately so buttons work
-        window.selectToken = function(token) {
-            // This will be overridden later with full functionality
-            console.log('Token selected:', token);
-        };
+        // Token state
+        let selectedToken = 'PLS';
+        window.selectedToken = 'PLS';
+        
+        // Define selectTokenNow function immediately for buttons
+        function selectTokenNow(token) {
+            selectedToken = token;
+            window.selectedToken = token;
+            selectedDenomination = null;
+            
+            // Update button styles
+            document.querySelectorAll('.token-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`token-${token}`).classList.add('active');
+            
+            // Update denomination cards
+            const gridContainer = document.getElementById('denominationGrid');
+            if (!gridContainer) return;
+            
+            if (token === 'PLS') {
+                gridContainer.innerHTML = `
+                    <div class="denomination-card" onclick="selectDenomination('1M')">
+                        <div class="denomination-amount">1M</div>
+                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    </div>
+                    <div class="denomination-card" onclick="selectDenomination('10M')">
+                        <div class="denomination-amount">10M</div>
+                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    </div>
+                    <div class="denomination-card" onclick="selectDenomination('100M')">
+                        <div class="denomination-amount">100M</div>
+                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    </div>
+                    <div class="denomination-card" onclick="selectDenomination('1B')">
+                        <div class="denomination-amount">1B</div>
+                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    </div>
+                `;
+            } else if (token === 'PCOCK') {
+                gridContainer.innerHTML = `
+                    <div class="denomination-card" onclick="selectDenomination('10K')" style="grid-column: span 2;">
+                        <div class="denomination-amount">10K</div>
+                        <div class="denomination-label">PCOCK <img src="/branding/logos/peacocklogo.webp" alt="PCOCK" class="pls-logo"></div>
+                    </div>
+                `;
+            }
+            
+            // Update deposit button
+            if (typeof updateDepositButton === 'function') {
+                updateDepositButton();
+            }
+        }
+        
+        window.selectToken = selectTokenNow;
         
         // Copy support address function
         // Format address for display based on screen width
@@ -1085,83 +1135,7 @@
         // Start animation
         animate();
         
-        // Add event listeners for token buttons
-        document.addEventListener('DOMContentLoaded', function() {
-            const plsBtn = document.getElementById('token-PLS');
-            const pcockBtn = document.getElementById('token-PCOCK');
-            
-            if (plsBtn) {
-                plsBtn.addEventListener('click', function() {
-                    window.selectToken('PLS');
-                });
-            }
-            
-            if (pcockBtn) {
-                pcockBtn.addEventListener('click', function() {
-                    window.selectToken('PCOCK');
-                });
-            }
-        });
-        
-        // Token switching functionality
-        let selectedToken = 'PLS';
-        window.selectedToken = 'PLS'; // Make it globally accessible
-        
-        window.selectToken = function(token) {
-            selectedToken = token;
-            window.selectedToken = token; // Update global
-            selectedDenomination = null; // Reset selection
-            
-            // Update button styles
-            document.querySelectorAll('.token-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById(`token-${token}`).classList.add('active');
-            
-            // Update denomination cards
-            const gridContainer = document.getElementById('denominationGrid');
-            
-            if (token === 'PLS') {
-                gridContainer.innerHTML = `
-                    <div class="denomination-card" onclick="selectDenomination('1M')">
-                        <div class="denomination-amount">1M</div>
-                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                    </div>
-                    <div class="denomination-card" onclick="selectDenomination('10M')">
-                        <div class="denomination-amount">10M</div>
-                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                    </div>
-                    <div class="denomination-card" onclick="selectDenomination('100M')">
-                        <div class="denomination-amount">100M</div>
-                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                    </div>
-                    <div class="denomination-card" onclick="selectDenomination('1B')">
-                        <div class="denomination-amount">1B</div>
-                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                    </div>
-                `;
-            } else if (token === 'PCOCK') {
-                gridContainer.innerHTML = `
-                    <div class="denomination-card" onclick="selectDenomination('10K')" style="grid-column: span 2;">
-                        <div class="denomination-amount">10K</div>
-                        <div class="denomination-label">PCOCK <img src="/branding/logos/peacocklogo.webp" alt="PCOCK" class="pls-logo"></div>
-                    </div>
-                `;
-            }
-            
-            // Update deposit button
-            updateDepositButton();
-            
-            // Update stats if visible
-            if (document.getElementById('statsTab') && !document.getElementById('statsTab').classList.contains('hidden')) {
-                updateTokenStats();
-            }
-            
-            // Update balance display if connected
-            if (userAccount && typeof updateBalanceForToken === 'function') {
-                updateBalanceForToken(token);
-            }
-        };
+        // Removed duplicate token code to prevent conflicts
         
         // Helper function to update stats based on token
         function updateTokenStats() {
