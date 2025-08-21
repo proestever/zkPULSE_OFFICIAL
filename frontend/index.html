@@ -840,24 +840,12 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
-    <script src="config-all-denominations.js"></script>
-    <script src="config-pcock.js"></script>
-    <script src="tornado-api.js"></script>
-    <script src="withdrawal-complete.js"></script>
-    <script src="deposit-tracker.js"></script>
-    <script src="deposit-recovery.js"></script>
-    <script src="app-complete.js"></script>
-    <script src="enhanced-stats.js"></script>
     
-    <!-- Matrix Background Animation Script -->
+    <!-- Define token selection function FIRST before anything else -->
     <script>
-        // Token state
-        let selectedToken = 'PLS';
-        window.selectedToken = 'PLS';
-        
-        // Define selectTokenNow function immediately for buttons
+        // This MUST be defined first so buttons can use it
         window.selectTokenNow = function(token) {
-            selectedToken = token;
+            // Update state
             window.selectedToken = token;
             selectedDenomination = null;
             
@@ -865,7 +853,10 @@
             document.querySelectorAll('.token-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            document.getElementById(`token-${token}`).classList.add('active');
+            const activeBtn = document.getElementById(`token-${token}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
             
             // Update denomination cards
             const gridContainer = document.getElementById('denominationGrid');
@@ -899,13 +890,28 @@
                 `;
             }
             
-            // Update deposit button
+            // Update deposit button if function exists
             if (typeof updateDepositButton === 'function') {
                 updateDepositButton();
             }
-        }
+        };
         
-        window.selectToken = selectTokenNow;
+        // Alias for compatibility
+        window.selectToken = window.selectTokenNow;
+    </script>
+    <script src="config-all-denominations.js"></script>
+    <script src="config-pcock.js"></script>
+    <script src="tornado-api.js"></script>
+    <script src="withdrawal-complete.js"></script>
+    <script src="deposit-tracker.js"></script>
+    <script src="deposit-recovery.js"></script>
+    <script src="app-complete.js"></script>
+    <script src="enhanced-stats.js"></script>
+    
+    <!-- Matrix Background Animation Script -->
+    <script>
+        // Token state (already defined globally above)
+        window.selectedToken = window.selectedToken || 'PLS';
         
         // Copy functions need to be global
         window.copySupportAddress = function() {
