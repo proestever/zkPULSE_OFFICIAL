@@ -907,10 +907,12 @@
             // Update UI to show selected
             document.querySelectorAll('.denomination-card').forEach(card => {
                 card.classList.remove('selected');
+                // Check if this card matches the selected denomination
+                const cardText = card.querySelector('.denomination-amount');
+                if (cardText && cardText.textContent === denom) {
+                    card.classList.add('selected');
+                }
             });
-            
-            // Find and select the clicked card
-            event.currentTarget.classList.add('selected');
             
             // Update deposit button
             const btn = document.getElementById('depositBtn');
@@ -1107,7 +1109,7 @@
         };
         
         // Override the updateDepositButton function to handle tokens
-        const originalUpdateDepositButton = window.updateDepositButton;
+        const originalUpdateDepositButton = window.updateDepositButton || function() {};
         window.updateDepositButton = function() {
             const btn = document.getElementById('depositBtn');
             if (!userAccount) {
@@ -1123,8 +1125,10 @@
             }
         };
         
-        // Override deposit function to handle PCOCK
-        const originalDeposit = window.deposit;
+        // Override deposit function to handle PCOCK (check if already defined)
+        if (typeof window.originalDeposit === 'undefined') {
+            window.originalDeposit = window.deposit || function() {};
+        }
         window.deposit = async function() {
             if (!userAccount || !selectedDenomination) {
                 showMessage('Please connect wallet and select an amount', 'error');
@@ -1138,8 +1142,8 @@
                 
                 if (currentToken === 'PLS') {
                     // Use original PLS deposit logic
-                    if (originalDeposit) {
-                        return await originalDeposit();
+                    if (window.originalDeposit) {
+                        return await window.originalDeposit();
                     }
                 } else if (currentToken === 'PCOCK') {
                     // Handle PCOCK deposit
