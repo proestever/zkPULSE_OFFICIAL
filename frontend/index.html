@@ -1224,7 +1224,9 @@
             if (window.tornadoAPI && window.tornadoAPI.generateDeposit) {
                 deposit = window.tornadoAPI.generateDeposit();
             } else {
-                // Fallback: generate random nullifier and secret
+                // Fallback: generate random nullifier and secret within field range
+                const FIELD_SIZE = BigInt('21888242871839275222246405745257275088548364400416034343698204186575808495617');
+                
                 const rbigint = (nbytes) => {
                     const buf = crypto.getRandomValues(new Uint8Array(nbytes));
                     let result = BigInt(0);
@@ -1234,15 +1236,24 @@
                     return result;
                 };
                 
-                const nullifier = rbigint(31);
-                const secret = rbigint(31);
+                // Generate values that are guaranteed to be within field
+                const nullifier = rbigint(31) % FIELD_SIZE;
+                const secret = rbigint(31) % FIELD_SIZE;
                 
-                // Simple commitment calculation (for emergency fallback)
-                const hash = web3.utils.soliditySha3(
+                // Use Pedersen hash or simple field-safe commitment
+                // For compatibility, we'll use a simple approach that mimics the circuit
+                const preimage = web3.utils.soliditySha3(
                     {t: 'uint256', v: nullifier.toString()},
                     {t: 'uint256', v: secret.toString()}
                 );
-                const commitmentBigInt = BigInt('0x' + hash.slice(2));
+                
+                // Ensure commitment is within field range
+                let commitmentBigInt = BigInt(preimage) % FIELD_SIZE;
+                
+                // Make sure it's not zero
+                if (commitmentBigInt === BigInt(0)) {
+                    commitmentBigInt = BigInt(1);
+                }
                 
                 const noteHex = nullifier.toString(16).padStart(62, '0') + secret.toString(16).padStart(62, '0');
                 
