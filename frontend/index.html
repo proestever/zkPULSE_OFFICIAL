@@ -856,7 +856,7 @@
         window.selectedToken = 'PLS';
         
         // Define selectTokenNow function immediately for buttons
-        function selectTokenNow(token) {
+        window.selectTokenNow = function(token) {
             selectedToken = token;
             window.selectedToken = token;
             selectedDenomination = null;
@@ -1220,7 +1220,13 @@
         if (pcockBtn) {
             pcockBtn.style.cursor = 'pointer';
             pcockBtn.onclick = function() {
-                selectTokenNow('PCOCK');
+                if (typeof selectTokenNow !== 'undefined') {
+                    selectTokenNow('PCOCK');
+                } else if (typeof window.selectToken !== 'undefined') {
+                    window.selectToken('PCOCK');
+                } else {
+                    console.error('Token selection function not found');
+                }
             };
         }
         
@@ -1229,7 +1235,13 @@
         if (plsBtn) {
             plsBtn.style.cursor = 'pointer';
             plsBtn.onclick = function() {
-                selectTokenNow('PLS');
+                if (typeof selectTokenNow !== 'undefined') {
+                    selectTokenNow('PLS');
+                } else if (typeof window.selectToken !== 'undefined') {
+                    window.selectToken('PLS');
+                } else {
+                    console.error('Token selection function not found');
+                }
             };
         }
     });
