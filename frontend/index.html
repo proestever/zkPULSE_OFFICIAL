@@ -907,6 +907,69 @@
         
         window.selectToken = selectTokenNow;
         
+        // Copy functions need to be global
+        window.copySupportAddress = function() {
+            const address = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
+            navigator.clipboard.writeText(address).then(() => {
+                const tooltip = document.getElementById('copyTooltip');
+                if (tooltip) {
+                    tooltip.style.display = 'inline';
+                    tooltip.innerHTML = '✅ Copied!';
+                    setTimeout(() => {
+                        tooltip.style.display = 'none';
+                    }, 2000);
+                }
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = address;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const tooltip = document.getElementById('copyTooltip');
+                if (tooltip) {
+                    tooltip.style.display = 'inline';
+                    tooltip.innerHTML = '✅ Copied!';
+                    setTimeout(() => {
+                        tooltip.style.display = 'none';
+                    }, 2000);
+                }
+            });
+        };
+        
+        window.copyContractAddress = function() {
+            const address = '0x8De9077B619DcBdA28edda4b8dC16538a59EFb49';
+            navigator.clipboard.writeText(address).then(() => {
+                const tooltip = document.getElementById('contractTooltip');
+                if (tooltip) {
+                    tooltip.style.display = 'inline';
+                    tooltip.innerHTML = '✅ Copied!';
+                    setTimeout(() => {
+                        tooltip.style.display = 'none';
+                    }, 2000);
+                }
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = address;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const tooltip = document.getElementById('contractTooltip');
+                if (tooltip) {
+                    tooltip.style.display = 'inline';
+                    tooltip.innerHTML = '✅ Copied!';
+                    setTimeout(() => {
+                        tooltip.style.display = 'none';
+                    }, 2000);
+                }
+            });
+        };
+        
         // Copy support address function
         // Format address for display based on screen width
         // Format address for display based on screen width
@@ -934,68 +997,6 @@
                     contractElement.textContent = contractAddress;
                 }
             }
-        }
-        function copySupportAddress() {
-            const address = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
-            navigator.clipboard.writeText(address).then(() => {
-                const tooltip = document.getElementById('copyTooltip');
-                tooltip.style.display = 'inline';
-                tooltip.innerHTML = '✅ Copied!';
-                
-                setTimeout(() => {
-                    tooltip.style.display = 'none';
-                    tooltip.innerHTML = '';
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = address;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                
-                const tooltip = document.getElementById('copyTooltip');
-                tooltip.style.display = 'inline';
-                tooltip.innerHTML = '✅ Copied!';
-                setTimeout(() => {
-                    tooltip.style.display = 'none';
-                    tooltip.innerHTML = '';
-                }, 2000);
-            });
-        }
-        
-        // Copy contract address function
-        function copyContractAddress() {
-            const address = '0x8De9077B619DcBdA28edda4b8dC16538a59EFb49';
-            navigator.clipboard.writeText(address).then(() => {
-                const tooltip = document.getElementById('contractTooltip');
-                tooltip.style.display = 'inline';
-                tooltip.innerHTML = '✅ Copied!';
-                
-                setTimeout(() => {
-                    tooltip.style.display = 'none';
-                    tooltip.innerHTML = '';
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = address;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                
-                const tooltip = document.getElementById('contractTooltip');
-                tooltip.style.display = 'inline';
-                tooltip.innerHTML = '✅ Copied!';
-                setTimeout(() => {
-                    tooltip.style.display = 'none';
-                    tooltip.innerHTML = '';
-                }, 2000);
-            });
         }
         // Initialize address display
         formatAddressDisplay();
@@ -1209,6 +1210,29 @@
             
             showMessage(`Successfully deposited ${amount} PCOCK! Save your note!`, 'success');
         };
+    </script>
+    
+    <!-- Fix PCOCK button click -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ensure PCOCK button is clickable
+        const pcockBtn = document.getElementById('token-PCOCK');
+        if (pcockBtn) {
+            pcockBtn.style.cursor = 'pointer';
+            pcockBtn.onclick = function() {
+                selectTokenNow('PCOCK');
+            };
+        }
+        
+        // Ensure PLS button is clickable
+        const plsBtn = document.getElementById('token-PLS');
+        if (plsBtn) {
+            plsBtn.style.cursor = 'pointer';
+            plsBtn.onclick = function() {
+                selectTokenNow('PLS');
+            };
+        }
+    });
     </script>
     
     <!-- Separate animation script to ensure it runs independently -->
