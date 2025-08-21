@@ -701,7 +701,7 @@
                         PLS
                     </button>
                     <button class="token-btn" onclick="window.selectToken('PCOCK')" id="token-PCOCK">
-                        <img src="https://tokens.app.pulsex.com/images/tokens/0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F.png" alt="PCOCK">
+                        <img src="/branding/logos/peacock_official_logo.png" alt="PCOCK">
                         PCOCK
                     </button>
                 </div>
@@ -1081,9 +1081,12 @@
         
         // Token switching functionality
         let selectedToken = 'PLS';
+        window.selectedToken = 'PLS'; // Make it globally accessible
         
         window.selectToken = function(token) {
             selectedToken = token;
+            window.selectedToken = token; // Update global
+            selectedDenomination = null; // Reset selection
             
             // Update button styles
             document.querySelectorAll('.token-btn').forEach(btn => {
@@ -1117,10 +1120,13 @@
                 gridContainer.innerHTML = `
                     <div class="denomination-card" onclick="selectDenomination('10K')" style="grid-column: span 2;">
                         <div class="denomination-amount">10K</div>
-                        <div class="denomination-label">PCOCK <img src="https://tokens.app.pulsex.com/images/tokens/0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F.png" alt="PCOCK" class="pls-logo"></div>
+                        <div class="denomination-label">PCOCK <img src="/branding/logos/peacock_official_logo.png" alt="PCOCK" class="pls-logo"></div>
                     </div>
                 `;
             }
+            
+            // Update deposit button
+            updateDepositButton();
             
             // Update stats if visible
             if (document.getElementById('statsTab') && !document.getElementById('statsTab').classList.contains('hidden')) {
@@ -1197,6 +1203,147 @@
                 walletBtn.parentNode.insertBefore(balanceDisplay, walletBtn.nextSibling);
             }
             balanceDisplay.textContent = `Balance: ${parseFloat(balance).toFixed(2)} ${symbol}`;
+        };
+        
+        // Override the updateDepositButton function to handle tokens
+        const originalUpdateDepositButton = window.updateDepositButton;
+        window.updateDepositButton = function() {
+            const btn = document.getElementById('depositBtn');
+            if (!userAccount) {
+                btn.textContent = 'Connect Wallet First';
+                btn.disabled = true;
+            } else if (!selectedDenomination) {
+                btn.textContent = 'Select Amount';
+                btn.disabled = true;
+            } else {
+                const tokenSymbol = window.selectedToken || 'PLS';
+                btn.textContent = `Deposit ${selectedDenomination} ${tokenSymbol}`;
+                btn.disabled = false;
+            }
+        };
+        
+        // Override deposit function to handle PCOCK
+        const originalDeposit = window.deposit;
+        window.deposit = async function() {
+            if (!userAccount || !selectedDenomination) {
+                showMessage('Please connect wallet and select an amount', 'error');
+                return;
+            }
+            
+            const currentToken = window.selectedToken || 'PLS';
+            
+            try {
+                showLoading(true);
+                
+                if (currentToken === 'PLS') {
+                    // Use original PLS deposit logic
+                    if (originalDeposit) {
+                        return await originalDeposit();
+                    }
+                } else if (currentToken === 'PCOCK') {
+                    // Handle PCOCK deposit
+                    await depositPCOCK();
+                }
+            } catch (error) {
+                console.error('Deposit error:', error);
+                showMessage('Deposit failed: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        };
+        
+        // PCOCK deposit function
+        async function depositPCOCK() {
+            const PCOCK_TORNADO_ADDRESS = '0x5915Dc6C5a3D2F06DB93bc763334D2e8F5D1A8C3';
+            const PCOCK_TOKEN_ADDRESS = '0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F';
+            
+            // Token ABI for approval
+            const tokenABI = [
+                {
+                    "inputs": [
+                        {"name": "spender", "type": "address"},
+                        {"name": "amount", "type": "uint256"}
+                    ],
+                    "name": "approve",
+                    "outputs": [{"name": "", "type": "bool"}],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {"name": "owner", "type": "address"},
+                        {"name": "spender", "type": "address"}
+                    ],
+                    "name": "allowance",
+                    "outputs": [{"name": "", "type": "uint256"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ];
+            
+            // Tornado ABI for deposit
+            const tornadoABI = [
+                {
+                    "inputs": [{"name": "_commitment", "type": "bytes32"}],
+                    "name": "deposit",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                }
+            ];
+            
+            const tokenContract = new web3.eth.Contract(tokenABI, PCOCK_TOKEN_ADDRESS);
+            const tornadoContract = new web3.eth.Contract(tornadoABI, PCOCK_TORNADO_ADDRESS);
+            
+            // 10,000 PCOCK amount
+            const amount = '10000';
+            const amountWei = web3.utils.toWei(amount, 'ether');
+            
+            // Check allowance
+            const allowance = await tokenContract.methods.allowance(userAccount, PCOCK_TORNADO_ADDRESS).call();
+            
+            if (BigInt(allowance) < BigInt(amountWei)) {
+                showMessage('Approving PCOCK spending...', 'info');
+                
+                // Approve token spending
+                const approveTx = await tokenContract.methods.approve(PCOCK_TORNADO_ADDRESS, amountWei).send({
+                    from: userAccount
+                });
+                
+                console.log('Approval TX:', approveTx.transactionHash);
+                showMessage('Approval successful! Now depositing...', 'success');
+            }
+            
+            // Generate commitment
+            const deposit = window.tornadoAPI.generateDeposit();
+            const commitment = '0x' + deposit.commitment.toString(16).padStart(64, '0');
+            
+            // Make deposit
+            const depositTx = await tornadoContract.methods.deposit(commitment).send({
+                from: userAccount
+            });
+            
+            console.log('Deposit TX:', depositTx.transactionHash);
+            
+            // Generate note
+            const note = `tornado-pcock-10k-369-${deposit.noteHex}`;
+            
+            // Save to tracker
+            window.depositTracker.addDeposit({
+                note: note,
+                commitment: commitment,
+                amount: '10K',
+                token: 'PCOCK',
+                timestamp: Date.now(),
+                txHash: depositTx.transactionHash,
+                contract: PCOCK_TORNADO_ADDRESS
+            });
+            
+            // Display note
+            document.getElementById('noteText').textContent = note;
+            document.getElementById('depositNote').classList.remove('hidden');
+            
+            showMessage(`Successfully deposited ${amount} PCOCK! Save your note!`, 'success');
         };
     </script>
 </body>
