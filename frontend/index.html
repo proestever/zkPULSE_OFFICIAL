@@ -693,20 +693,12 @@
         </div>
         
         <div id="depositTab">
-            <!-- Token Selector -->
-            <div class="token-selector">
-                <div class="token-buttons">
-                    <button class="token-btn active" id="token-PLS" onclick="selectTokenNow('PLS')" style="border: none; outline: none;">
-                        <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS">
-                        PLS
-                    </button>
-                    <!-- PCOCK temporarily disabled
-                    <button class="token-btn" id="token-PCOCK" onclick="selectTokenNow('PCOCK')" style="border: none; outline: none;">
-                        <img src="/branding/logos/peacocklogo.webp" alt="PCOCK" onerror="this.src='https://tokens.app.pulsex.com/images/tokens/0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F.png'">
-                        PCOCK
-                    </button>
-                    -->
-                </div>
+            <!-- Token selector hidden - only PLS supported -->
+            <div style="display: none;">
+                <button class="token-btn active" id="token-PLS" onclick="selectTokenNow('PLS')" style="border: none; outline: none;">
+                    <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS">
+                    PLS
+                </button>
             </div>
             
             <h3 style="margin-bottom: 15px;">Select Amount</h3>

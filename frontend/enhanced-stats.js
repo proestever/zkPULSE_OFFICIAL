@@ -120,10 +120,7 @@ async function updateEnhancedStats() {
             // Update UI for this denomination
             const depositsElement = document.getElementById(`deposits-${denom}`);
             if (depositsElement) {
-                let statusText = `${activeDeposits} active`;
-                if (depositCount > 0) {
-                    statusText += ` (${depositCount} total)`;
-                }
+                let statusText = `${depositCount} deposits`;
                 if (newCount > 0 && lastCount > 0) {
                     statusText += ` <span style="color: #00ff88;">+${newCount} new</span>`;
                 }
@@ -159,10 +156,7 @@ async function updateEnhancedStats() {
     // Update totals
     const totalDepositsElement = document.getElementById('deposits-total');
     if (totalDepositsElement) {
-        let totalText = `${totalActive} active`;
-        if (totalDeposits > 0) {
-            totalText += ` (${totalDeposits} total, ${totalWithdrawals} withdrawn)`;
-        }
+        let totalText = `${totalDeposits} total deposits`;
         totalDepositsElement.innerHTML = totalText;
     }
     
