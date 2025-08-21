@@ -767,7 +767,7 @@
                  onmouseover="this.style.borderColor='#00ff41'; this.style.boxShadow='0 0 15px rgba(0, 255, 65, 0.3)';"
                  onmouseout="this.style.borderColor='rgba(0, 255, 65, 0.2)'; this.style.boxShadow='none';">
                 <span style="color: #00ff41; font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 0.5px;">
-                    0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB
+                    0x9Be83826AFDf22a88027f8e5b79f428178bd9635
                 </span>
                 <span id="copyTooltip" style="margin-left: 10px; color: #00ff41; font-size: 11px; display: none;"></span>
             </div>
@@ -804,7 +804,7 @@
             // Format support address
             const supportElement = document.querySelector('#supportAddress span');
             if (supportElement) {
-                const supportAddress = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
+                const supportAddress = '0x9Be83826AFDf22a88027f8e5b79f428178bd9635';
                 if (window.innerWidth <= 480) {
                     supportElement.textContent = supportAddress.slice(0, 6) + '...' + supportAddress.slice(-4);
                     supportElement.title = supportAddress;
@@ -826,7 +826,7 @@
             }
         }
         function copySupportAddress() {
-            const address = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
+            const address = '0x9Be83826AFDf22a88027f8e5b79f428178bd9635';
             navigator.clipboard.writeText(address).then(() => {
                 const tooltip = document.getElementById('copyTooltip');
                 tooltip.style.display = 'inline';
