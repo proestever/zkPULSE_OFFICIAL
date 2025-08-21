@@ -997,143 +997,9 @@
                 }, 2000);
             });
         }
-        
-        // Animated background
-        const canvas = document.getElementById('matrix-bg');
-        const ctx = canvas.getContext('2d');
-        
-        // Set canvas size
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // Sample depositor addresses (first 4 and last 4 format)
-        const addresses = [
-            '0x742d...8dC4',
-            '0xA1b2...3cD4',
-            '0x9876...5432',
-            '0xDef1...2345',
-            '0x1234...5678',
-            '0xCafe...Babe',
-            '0xDead...Beef',
-            '0x8765...4321',
-            '0xFeed...Face',
-            '0xBaad...F00d',
-            '0x1337...1337',
-            '0xC0de...Cafe',
-            '0x5aFe...9b8c',
-            '0x7890...abcd',
-            '0xBc4e...def0'
-        ];
-        
-        // Node class for each floating address
-        class Node {
-            constructor(x, y, address) {
-                this.x = x;
-                this.y = y;
-                this.address = address;
-                this.vx = (Math.random() - 0.5) * 0.5; // Slow velocity
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.angle = Math.random() * Math.PI * 2;
-                this.angleSpeed = (Math.random() - 0.5) * 0.002;
-                this.radius = 100 + Math.random() * 50;
-            }
-            
-            update() {
-                // Smooth circular motion with drift
-                this.angle += this.angleSpeed;
-                this.x += this.vx + Math.cos(this.angle) * 0.1;
-                this.y += this.vy + Math.sin(this.angle) * 0.1;
-                
-                // Wrap around edges smoothly
-                if (this.x < -50) this.x = canvas.width + 50;
-                if (this.x > canvas.width + 50) this.x = -50;
-                if (this.y < -50) this.y = canvas.height + 50;
-                if (this.y > canvas.height + 50) this.y = -50;
-            }
-            
-            draw() {
-                ctx.save();
-                
-                // Add glow effect
-                ctx.shadowColor = '#00ff41';
-                ctx.shadowBlur = 10;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-                
-                // Draw address with glow
-                ctx.fillStyle = 'rgba(0, 255, 65, 0.5)';
-                ctx.font = '11px monospace';
-                ctx.fillText(this.address, this.x, this.y);
-                
-                // Small glowing dot at node position
-                ctx.shadowBlur = 15;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y - 5, 2, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0, 255, 65, 0.8)';
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-        
-        // Create nodes scattered across screen
-        const nodes = [];
-        for (let i = 0; i < addresses.length; i++) {
-            nodes.push(new Node(
-                Math.random() * canvas.width,
-                Math.random() * canvas.height,
-                addresses[i]
-            ));
-        }
-        
-        // Draw connections between ALL nodes
-        function drawConnections() {
-            ctx.lineWidth = 0.8;
-            
-            for (let i = 0; i < nodes.length; i++) {
-                for (let j = i + 1; j < nodes.length; j++) {
-                    const dx = nodes[i].x - nodes[j].x;
-                    const dy = nodes[i].y - nodes[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    // Connect all nodes with varying opacity based on distance
-                    const maxDistance = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
-                    const opacity = Math.max(0.05, 0.25 * (1 - distance / maxDistance));
-                    
-                    ctx.strokeStyle = `rgba(0, 255, 65, ${opacity})`;
-                    ctx.beginPath();
-                    ctx.moveTo(nodes[i].x, nodes[i].y - 5);
-                    ctx.lineTo(nodes[j].x, nodes[j].y - 5);
-                    ctx.stroke();
-                }
-            }
-        }
-        
-        // Animation loop
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw connections first (behind nodes)
-            drawConnections();
-            
-            // Update and draw nodes
-            nodes.forEach(node => {
-                node.update();
-                node.draw();
-            });
-            
-            requestAnimationFrame(animate);
-        }
-        
         // Initialize address display
         formatAddressDisplay();
         window.addEventListener('resize', formatAddressDisplay);
-        
-        // Start animation
-        animate();
         
         // Removed duplicate token code to prevent conflicts
         
@@ -1343,6 +1209,128 @@
             
             showMessage(`Successfully deposited ${amount} PCOCK! Save your note!`, 'success');
         };
+    </script>
+    
+    <!-- Separate animation script to ensure it runs independently -->
+    <script>
+    (function() {
+        // Animated background - isolated to prevent conflicts
+        const canvas = document.getElementById('matrix-bg');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Sample depositor addresses
+        const addresses = [
+            '0x742d...8dC4',
+            '0xA1b2...3cD4',
+            '0x9876...5432',
+            '0xDef1...2345',
+            '0x1234...5678',
+            '0xCafe...Babe',
+            '0xDead...Beef',
+            '0x8765...4321',
+            '0xFeed...Face',
+            '0xBaad...F00d',
+            '0x1337...1337',
+            '0xC0de...Cafe',
+            '0x5aFe...9b8c',
+            '0x7890...abcd',
+            '0xBc4e...def0'
+        ];
+        
+        // Node class for floating addresses
+        class Node {
+            constructor(x, y, address) {
+                this.x = x;
+                this.y = y;
+                this.address = address;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.angle = Math.random() * Math.PI * 2;
+                this.angleSpeed = (Math.random() - 0.5) * 0.002;
+            }
+            
+            update() {
+                this.angle += this.angleSpeed;
+                this.x += this.vx + Math.cos(this.angle) * 0.1;
+                this.y += this.vy + Math.sin(this.angle) * 0.1;
+                
+                if (this.x < -50) this.x = canvas.width + 50;
+                if (this.x > canvas.width + 50) this.x = -50;
+                if (this.y < -50) this.y = canvas.height + 50;
+                if (this.y > canvas.height + 50) this.y = -50;
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.shadowColor = '#00ff41';
+                ctx.shadowBlur = 10;
+                ctx.fillStyle = 'rgba(0, 255, 65, 0.5)';
+                ctx.font = '11px monospace';
+                ctx.fillText(this.address, this.x, this.y);
+                
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y - 5, 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 255, 65, 0.8)';
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        
+        // Create nodes
+        const nodes = [];
+        for (let i = 0; i < addresses.length; i++) {
+            nodes.push(new Node(
+                Math.random() * canvas.width,
+                Math.random() * canvas.height,
+                addresses[i]
+            ));
+        }
+        
+        // Draw connections
+        function drawConnections() {
+            ctx.lineWidth = 0.8;
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const dx = nodes[i].x - nodes[j].x;
+                    const dy = nodes[i].y - nodes[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const maxDistance = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
+                    const opacity = Math.max(0.05, 0.25 * (1 - distance / maxDistance));
+                    
+                    ctx.strokeStyle = `rgba(0, 255, 65, ${opacity})`;
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[i].x, nodes[i].y - 5);
+                    ctx.lineTo(nodes[j].x, nodes[j].y - 5);
+                    ctx.stroke();
+                }
+            }
+        }
+        
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawConnections();
+            nodes.forEach(node => {
+                node.update();
+                node.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        
+        // Start animation immediately
+        animate();
+    })();
     </script>
 </body>
 </html>
