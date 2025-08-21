@@ -21,15 +21,16 @@
   "author": "ZK Pulse Team",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
+    "circomlib": "git+https://github.com/tornadocash/circomlib.git#c372f14d324d57339c88451834bf2824e73bbdbc",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "web3": "^4.14.0",
-    "snarkjs": "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5",
-    "circomlib": "git+https://github.com/tornadocash/circomlib.git#c372f14d324d57339c88451834bf2824e73bbdbc",
-    "websnark": "git+https://github.com/tornadocash/websnark.git#4c0af6a8b65aabea3c09f377f63c44e7a58afa6d",
+    "express": "^4.18.2",
     "fixed-merkle-tree": "^0.6.1",
-    "uuid": "^9.0.0"
+    "snarkjs": "git+https://github.com/tornadocash/snarkjs.git#869181cfaf7526fe8972073d31655493a04326d5",
+    "solc": "^0.7.6",
+    "uuid": "^9.0.0",
+    "web3": "^4.14.0",
+    "websnark": "git+https://github.com/tornadocash/websnark.git#4c0af6a8b65aabea3c09f377f63c44e7a58afa6d"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
