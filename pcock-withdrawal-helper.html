@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PCOCK Withdrawal Helper</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+</head>
+<body>
+    <h1>PCOCK Withdrawal Helper</h1>
+    <p>Your Note: <code>tornado-pcock-10k-369-739044633c825ad6b156018fab14852f0e89ecb8abe581a8a2ac30bd53d645509ded69872f83a38680c30a2273c73471e8ad788a329af4768399fa1f89c9</code></p>
+    <p>Nullifier: <code>0x739044633c825ad6b156018fab14852f0e89ecb8abe581a8a2ac30bd53d645</code></p>
+    <p>Secret: <code>0x509ded69872f83a38680c30a2273c73471e8ad788a329af4768399fa1f89c9</code></p>
+    <p>Commitment: <code>0x02e990c5f3a6e61efb53739715d1a32ea32a46a826b895af7c658f36ca1ac965</code></p>
+    
+    <button onclick="tryWithdraw()">Generate Withdrawal Proof</button>
+    
+    <script>
+        const NULLIFIER = '0x739044633c825ad6b156018fab14852f0e89ecb8abe581a8a2ac30bd53d645';
+        const SECRET = '0x509ded69872f83a38680c30a2273c73471e8ad788a329af4768399fa1f89c9';
+        
+        async function tryWithdraw() {
+            // This would need the full tornado withdrawal logic
+            console.log('Nullifier:', NULLIFIER);
+            console.log('Secret:', SECRET);
+            alert('Copy these values to use with the CLI withdrawal tool');
+        }
+    </script>
+</body>
+</html>
