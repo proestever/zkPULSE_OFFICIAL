@@ -696,11 +696,11 @@
             <!-- Token Selector -->
             <div class="token-selector">
                 <div class="token-buttons">
-                    <button class="token-btn active" onclick="selectToken('PLS')" id="token-PLS">
+                    <button class="token-btn active" onclick="window.selectToken('PLS')" id="token-PLS">
                         <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS">
                         PLS
                     </button>
-                    <button class="token-btn" onclick="selectToken('PCOCK')" id="token-PCOCK">
+                    <button class="token-btn" onclick="window.selectToken('PCOCK')" id="token-PCOCK">
                         <img src="https://tokens.app.pulsex.com/images/tokens/0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F.png" alt="PCOCK">
                         PCOCK
                     </button>
@@ -709,7 +709,22 @@
             
             <h3 style="margin-bottom: 15px;">Select Amount</h3>
             <div class="denomination-grid" id="denominationGrid">
-                <!-- Denomination cards will be dynamically populated -->
+                <div class="denomination-card" onclick="selectDenomination('1M')">
+                    <div class="denomination-amount">1M</div>
+                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                </div>
+                <div class="denomination-card" onclick="selectDenomination('10M')">
+                    <div class="denomination-amount">10M</div>
+                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                </div>
+                <div class="denomination-card" onclick="selectDenomination('100M')">
+                    <div class="denomination-amount">100M</div>
+                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                </div>
+                <div class="denomination-card" onclick="selectDenomination('1B')">
+                    <div class="denomination-amount">1B</div>
+                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                </div>
             </div>
             
             <button class="button" onclick="deposit()" id="depositBtn" disabled>
@@ -832,7 +847,6 @@
     <script src="deposit-tracker.js"></script>
     <script src="deposit-recovery.js"></script>
     <script src="app-complete.js"></script>
-    <script src="app-with-tokens.js"></script>
     <script src="enhanced-stats.js"></script>
     
     <!-- Matrix Background Animation Script -->
@@ -1064,6 +1078,126 @@
         
         // Start animation
         animate();
+        
+        // Token switching functionality
+        let selectedToken = 'PLS';
+        
+        window.selectToken = function(token) {
+            selectedToken = token;
+            
+            // Update button styles
+            document.querySelectorAll('.token-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`token-${token}`).classList.add('active');
+            
+            // Update denomination cards
+            const gridContainer = document.getElementById('denominationGrid');
+            
+            if (token === 'PLS') {
+                gridContainer.innerHTML = `
+                    <div class="denomination-card" onclick="selectDenomination('1M')">
+                        <div class="denomination-amount">1M</div>
+                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    </div>
+                    <div class="denomination-card" onclick="selectDenomination('10M')">
+                        <div class="denomination-amount">10M</div>
+                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    </div>
+                    <div class="denomination-card" onclick="selectDenomination('100M')">
+                        <div class="denomination-amount">100M</div>
+                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    </div>
+                    <div class="denomination-card" onclick="selectDenomination('1B')">
+                        <div class="denomination-amount">1B</div>
+                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    </div>
+                `;
+            } else if (token === 'PCOCK') {
+                gridContainer.innerHTML = `
+                    <div class="denomination-card" onclick="selectDenomination('10K')" style="grid-column: span 2;">
+                        <div class="denomination-amount">10K</div>
+                        <div class="denomination-label">PCOCK <img src="https://tokens.app.pulsex.com/images/tokens/0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F.png" alt="PCOCK" class="pls-logo"></div>
+                    </div>
+                `;
+            }
+            
+            // Update stats if visible
+            if (document.getElementById('statsTab') && !document.getElementById('statsTab').classList.contains('hidden')) {
+                updateTokenStats();
+            }
+            
+            // Update balance display if connected
+            if (userAccount && typeof updateBalanceForToken === 'function') {
+                updateBalanceForToken(token);
+            }
+        };
+        
+        // Helper function to update stats based on token
+        function updateTokenStats() {
+            const statsContainer = document.getElementById('statsContainer');
+            if (!statsContainer) return;
+            
+            if (selectedToken === 'PLS') {
+                // Show PLS stats (existing functionality)
+                if (typeof updateStats === 'function') {
+                    updateStats();
+                }
+            } else {
+                // Show PCOCK stats
+                statsContainer.innerHTML = `
+                    <div class="stat-row">
+                        <div class="stat-denomination">10K PCOCK</div>
+                        <div class="stat-info">
+                            <span class="stat-deposits">Pool Active</span>
+                            <span class="stat-balance">0x5915Dc6C5a3D2F06DB93bc763334D2e8F5D1A8C3</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Update balance display for selected token
+        window.updateBalanceForToken = async function(token) {
+            if (!userAccount || !web3) return;
+            
+            let balance;
+            let symbol;
+            
+            if (token === 'PLS') {
+                balance = await web3.eth.getBalance(userAccount);
+                balance = web3.utils.fromWei(balance, 'ether');
+                symbol = 'PLS';
+            } else {
+                // Get PCOCK balance
+                const tokenABI = [
+                    {
+                        "inputs": [{"name": "account", "type": "address"}],
+                        "name": "balanceOf",
+                        "outputs": [{"name": "", "type": "uint256"}],
+                        "stateMutability": "view",
+                        "type": "function"
+                    }
+                ];
+                
+                const PCOCK_ADDRESS = '0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F';
+                const tokenContract = new web3.eth.Contract(tokenABI, PCOCK_ADDRESS);
+                const rawBalance = await tokenContract.methods.balanceOf(userAccount).call();
+                balance = web3.utils.fromWei(rawBalance, 'ether');
+                symbol = 'PCOCK';
+            }
+            
+            // Display balance
+            let balanceDisplay = document.getElementById('balanceDisplay');
+            if (!balanceDisplay) {
+                const walletBtn = document.getElementById('walletButton');
+                balanceDisplay = document.createElement('div');
+                balanceDisplay.id = 'balanceDisplay';
+                balanceDisplay.style.cssText = 'position: fixed; top: 60px; right: 20px; background: rgba(10, 10, 10, 0.7); padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(0, 255, 65, 0.2); color: #00ff41; font-size: 12px;';
+                walletBtn.parentNode.insertBefore(balanceDisplay, walletBtn.nextSibling);
+            }
+            balanceDisplay.textContent = `Balance: ${parseFloat(balance).toFixed(2)} ${symbol}`;
+        };
     </script>
 </body>
 </html>
