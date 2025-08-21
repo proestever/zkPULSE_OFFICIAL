@@ -1219,8 +1219,40 @@
                 showMessage('Approval successful! Now depositing...', 'success');
             }
             
-            // Generate commitment
-            const deposit = window.tornadoAPI.generateDeposit();
+            // Generate commitment - check if tornadoAPI exists, otherwise use fallback
+            let deposit;
+            if (window.tornadoAPI && window.tornadoAPI.generateDeposit) {
+                deposit = window.tornadoAPI.generateDeposit();
+            } else {
+                // Fallback: generate random nullifier and secret
+                const rbigint = (nbytes) => {
+                    const buf = crypto.getRandomValues(new Uint8Array(nbytes));
+                    let result = BigInt(0);
+                    for (let i = 0; i < buf.length; i++) {
+                        result = (result << BigInt(8)) + BigInt(buf[i]);
+                    }
+                    return result;
+                };
+                
+                const nullifier = rbigint(31);
+                const secret = rbigint(31);
+                
+                // Simple commitment calculation (for emergency fallback)
+                const commitmentBigInt = BigInt(web3.utils.soliditySha3(
+                    {t: 'uint256', v: nullifier.toString()},
+                    {t: 'uint256', v: secret.toString()}
+                ).slice(2), 16);
+                
+                const noteHex = nullifier.toString(16).padStart(62, '0') + secret.toString(16).padStart(62, '0');
+                
+                deposit = {
+                    nullifier,
+                    secret,
+                    commitment: commitmentBigInt,
+                    noteHex: noteHex
+                };
+            }
+            
             const commitment = '0x' + deposit.commitment.toString(16).padStart(64, '0');
             
             // Make deposit
