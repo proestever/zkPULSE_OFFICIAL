@@ -560,6 +560,15 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
+        /* Mobile support address handling */
+        #supportAddress span, #contractAddress span {
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
         @media (max-width: 768px) {
             .network-info {
                 top: 10px;
@@ -571,6 +580,24 @@
             
             .container {
                 margin-top: 60px;
+            }
+            
+            /* Truncate support address on mobile */
+            #supportAddress, #contractAddress {
+                max-width: 90%;
+                margin: 0 auto;
+            }
+            
+            #supportAddress span, #contractAddress span {
+                font-size: 11px !important;
+                letter-spacing: 0 !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Even smaller screens - show first and last parts only */
+            #supportAddress span, #contractAddress span {
+                font-size: 10px !important;
             }
         }
     </style>
@@ -711,8 +738,8 @@
             </div>
         </div>
         
-        <!-- Docs and GitHub Links -->
-        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px; display: flex; gap: 15px; justify-content: center; align-items: stretch;">
+        <!-- Docs, GitHub, and Bridge Links -->
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px; display: flex; gap: 15px; justify-content: center; align-items: stretch; flex-wrap: wrap;">
             <a href="docs.html" style="color: #00ff41; text-decoration: none; padding: 10px 20px; border: 1px solid #00ff41; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.5); transition: all 0.3s; font-size: 14px; font-weight: 500; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); height: 40px;" 
                onmouseover="this.style.background='rgba(0, 255, 65, 0.1)'; this.style.boxShadow='0 0 25px rgba(0, 255, 65, 0.4)';" 
                onmouseout="this.style.background='rgba(0, 0, 0, 0.5)'; this.style.boxShadow='0 0 15px rgba(0, 255, 65, 0.2)';">
@@ -723,6 +750,12 @@
                onmouseout="this.style.background='rgba(0, 0, 0, 0.5)'; this.style.boxShadow='0 0 15px rgba(0, 255, 65, 0.2)';">
                 <img src="/branding/logos/githublogo_zkpulse.png" alt="GitHub" style="width: 20px; height: 20px;">
                 GitHub
+            </a>
+            <a href="https://libertyswap.finance/" target="_blank" style="color: #00ff41; text-decoration: none; padding: 10px 20px; border: 1px solid #00ff41; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.5); transition: all 0.3s; font-size: 14px; font-weight: 500; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); height: 40px;" 
+               onmouseover="this.style.background='rgba(0, 255, 65, 0.1)'; this.style.boxShadow='0 0 25px rgba(0, 255, 65, 0.4)';" 
+               onmouseout="this.style.background='rgba(0, 0, 0, 0.5)'; this.style.boxShadow='0 0 15px rgba(0, 255, 65, 0.2)';">
+                <img src="https://pbs.twimg.com/profile_images/1914569705958039553/IOnwF_BE_400x400.jpg" alt="Bridge" style="width: 20px; height: 20px; border-radius: 50%;">
+                Bridge
             </a>
         </div>
         
@@ -737,6 +770,18 @@
                     0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB
                 </span>
                 <span id="copyTooltip" style="margin-left: 10px; color: #00ff41; font-size: 11px; display: none;"></span>
+            </div>
+            
+            <!-- zkPULSE Contract Address -->
+            <p style="color: #a0a0a0; font-size: 12px; margin-top: 20px; margin-bottom: 8px;">zkPULSE Contract:</p>
+            <div id="contractAddress" style="display: inline-block; padding: 8px 16px; background: rgba(10, 10, 10, 0.7); border: 1px solid rgba(0, 255, 65, 0.2); border-radius: 8px; cursor: pointer; transition: all 0.3s;"
+                 onclick="copyContractAddress()"
+                 onmouseover="this.style.borderColor='#00ff41'; this.style.boxShadow='0 0 15px rgba(0, 255, 65, 0.3)';" 
+                 onmouseout="this.style.borderColor='rgba(0, 255, 65, 0.2)'; this.style.boxShadow='none';"> 
+                <span style="color: #00ff41; font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 0.5px;">
+                    0x8De9077B619DcBdA28edda4b8dC16538a59EFb49
+                </span>
+                <span id="contractTooltip" style="margin-left: 10px; color: #00ff41; font-size: 11px; display: none;"></span>
             </div>
         </div>
     </div>
@@ -753,6 +798,33 @@
     <!-- Matrix Background Animation Script -->
     <script>
         // Copy support address function
+        // Format address for display based on screen width
+        // Format address for display based on screen width
+        function formatAddressDisplay() {
+            // Format support address
+            const supportElement = document.querySelector('#supportAddress span');
+            if (supportElement) {
+                const supportAddress = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
+                if (window.innerWidth <= 480) {
+                    supportElement.textContent = supportAddress.slice(0, 6) + '...' + supportAddress.slice(-4);
+                    supportElement.title = supportAddress;
+                } else {
+                    supportElement.textContent = supportAddress;
+                }
+            }
+            
+            // Format contract address
+            const contractElement = document.querySelector('#contractAddress span');
+            if (contractElement) {
+                const contractAddress = '0x8De9077B619DcBdA28edda4b8dC16538a59EFb49';
+                if (window.innerWidth <= 480) {
+                    contractElement.textContent = contractAddress.slice(0, 6) + '...' + contractAddress.slice(-4);
+                    contractElement.title = contractAddress;
+                } else {
+                    contractElement.textContent = contractAddress;
+                }
+            }
+        }
         function copySupportAddress() {
             const address = '0x4B3906A490Ca27D8c53Ef7A7A0FF58A2f26BDDbB';
             navigator.clipboard.writeText(address).then(() => {
@@ -775,6 +847,38 @@
                 document.body.removeChild(textArea);
                 
                 const tooltip = document.getElementById('copyTooltip');
+                tooltip.style.display = 'inline';
+                tooltip.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                    tooltip.innerHTML = '';
+                }, 2000);
+            });
+        }
+        
+        // Copy contract address function
+        function copyContractAddress() {
+            const address = '0x8De9077B619DcBdA28edda4b8dC16538a59EFb49';
+            navigator.clipboard.writeText(address).then(() => {
+                const tooltip = document.getElementById('contractTooltip');
+                tooltip.style.display = 'inline';
+                tooltip.innerHTML = '✅ Copied!';
+                
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                    tooltip.innerHTML = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = address;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const tooltip = document.getElementById('contractTooltip');
                 tooltip.style.display = 'inline';
                 tooltip.innerHTML = '✅ Copied!';
                 setTimeout(() => {
@@ -913,6 +1017,10 @@
             
             requestAnimationFrame(animate);
         }
+        
+        // Initialize address display
+        formatAddressDisplay();
+        window.addEventListener('resize', formatAddressDisplay);
         
         // Start animation
         animate();
