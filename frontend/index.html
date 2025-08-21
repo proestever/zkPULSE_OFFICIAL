@@ -1042,24 +1042,62 @@
             const statsContainer = document.getElementById('statsContainer');
             if (!statsContainer) return;
             
-            if (selectedToken === 'PLS') {
-                // Show PLS stats (existing functionality)
-                if (typeof updateStats === 'function') {
-                    updateStats();
-                }
-            } else {
-                // Show PCOCK stats
-                statsContainer.innerHTML = `
-                    <div class="stat-row">
-                        <div class="stat-denomination">10K PCOCK</div>
-                        <div class="stat-info">
-                            <span class="stat-deposits">Pool Active</span>
-                            <span class="stat-balance">0x5915Dc6C5a3D2F06DB93bc763334D2e8F5D1A8C3</span>
-                        </div>
+            // Always show PLS stats
+            displayPLSStats();
+        }
+        
+        // Display PLS network stats
+        function displayPLSStats() {
+            const statsContainer = document.getElementById('statsContainer');
+            if (!statsContainer) return;
+            
+            // Create the stats HTML structure
+            statsContainer.innerHTML = `
+                <div class="stat-row">
+                    <div class="stat-denomination">1M PLS</div>
+                    <div class="stat-info">
+                        <span class="stat-deposits" id="deposits-1M">Loading...</span>
+                        <span class="stat-balance" id="balance-1M">-</span>
                     </div>
-                `;
+                </div>
+                <div class="stat-row">
+                    <div class="stat-denomination">10M PLS</div>
+                    <div class="stat-info">
+                        <span class="stat-deposits" id="deposits-10M">Loading...</span>
+                        <span class="stat-balance" id="balance-10M">-</span>
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-denomination">100M PLS</div>
+                    <div class="stat-info">
+                        <span class="stat-deposits" id="deposits-100M">Loading...</span>
+                        <span class="stat-balance" id="balance-100M">-</span>
+                    </div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-denomination">1B PLS</div>
+                    <div class="stat-info">
+                        <span class="stat-deposits" id="deposits-1B">Loading...</span>
+                        <span class="stat-balance" id="balance-1B">-</span>
+                    </div>
+                </div>
+                <div class="stat-row total">
+                    <div class="stat-denomination">TOTAL</div>
+                    <div class="stat-info">
+                        <span class="stat-deposits" id="deposits-total">Loading...</span>
+                        <span class="stat-balance" id="balance-total">-</span>
+                    </div>
+                </div>
+            `;
+            
+            // Call the enhanced stats update function
+            if (typeof updateEnhancedStats === 'function') {
+                updateEnhancedStats();
             }
         }
+        
+        // Alias for compatibility
+        window.updateStats = displayPLSStats;
         
         // Update balance display for selected token
         window.updateBalanceForToken = async function(token) {

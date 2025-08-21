@@ -239,6 +239,13 @@ function switchBottomTab(tab) {
         tabs[1].classList.add('active');
         historyTab.classList.add('hidden');
         statsTab.classList.remove('hidden');
+        
+        // Update stats when showing stats tab
+        if (typeof displayPLSStats === 'function') {
+            displayPLSStats();
+        } else if (typeof updateStats === 'function') {
+            updateStats();
+        }
     }
 }
 
