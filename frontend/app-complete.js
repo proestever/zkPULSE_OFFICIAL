@@ -318,10 +318,23 @@ async function deposit() {
         
         // Get deposit amount and calculate fee
         const amount = web3.utils.toWei(contractInfo.amount, 'ether');
-        const feePercent = 0.005; // 0.5%
         const feeAmount = BigInt(amount) * BigInt(5) / BigInt(1000); // 0.5% fee
         const totalAmount = BigInt(amount) + feeAmount;
-        const feeRecipient = '0x9Be83826AFDf22a88027f8e5b79f428178bd9635'; // Fee recipient address
+        
+        // TornadoRouter contract address
+        const ROUTER_ADDRESS = '0x6b5D237da6Ca8EB7D86722d79fc1EE75DB2821cD';
+        
+        // Router ABI (only the function we need)
+        const routerABI = [{
+            "inputs": [
+                {"name": "_tornado", "type": "address"},
+                {"name": "_commitment", "type": "bytes32"}
+            ],
+            "name": "depositWithFee",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        }];
         
         // Check balance for total amount (deposit + fee)
         const balance = await web3.eth.getBalance(userAccount);
@@ -330,26 +343,20 @@ async function deposit() {
             throw new Error(`Insufficient balance. You need ${totalNeeded} PLS (includes 0.5% fee) to make this deposit.`);
         }
         
-        // Send fee first
-        showLoading(true, 'Processing service fee (0.5%)...');
-        const feeTx = await web3.eth.sendTransaction({
-            from: userAccount,
-            to: feeRecipient,
-            value: feeAmount.toString(),
-            gas: 21000
-        });
-        console.log('Fee transaction:', feeTx.transactionHash);
-        
         console.log('Deposit data:', { commitment: depositData.commitment });
         
         // Update loading message before wallet interaction
-        showLoading(true, 'Processing transaction...');
+        showLoading(true, 'Processing deposit with fee (single transaction)...');
         
-        // Send deposit transaction
-        const tx = await contract.methods.deposit(depositData.commitment).send({
+        // Use router to deposit with fee in a single transaction
+        const router = new web3.eth.Contract(routerABI, ROUTER_ADDRESS);
+        const tx = await router.methods.depositWithFee(
+            contractInfo.address,  // Tornado pool address
+            depositData.commitment  // Commitment
+        ).send({
             from: userAccount,
-            value: amount,
-            gas: 1500000
+            value: totalAmount.toString(),  // Total amount including fee
+            gas: 250000  // Router needs less gas than direct deposit
         });
         
         console.log('Deposit transaction:', tx);
