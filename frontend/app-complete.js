@@ -307,8 +307,8 @@ async function deposit() {
         const feeAmount = BigInt(amount) * BigInt(5) / BigInt(1000); // 0.5% fee
         const totalAmount = BigInt(amount) + feeAmount;
         
-        // TornadoRouter contract address
-        const ROUTER_ADDRESS = '0x6b5D237da6Ca8EB7D86722d79fc1EE75DB2821cD';
+        // zkPULSERouter contract address (fees go to BuyAndBurn)
+        const ROUTER_ADDRESS = '0x48dad12eC79a666188d3Ca6a3FF3B6231B42e848';
         
         // Router ABI (only the function we need)
         const routerABI = [{

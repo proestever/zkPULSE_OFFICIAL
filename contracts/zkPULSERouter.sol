@@ -7,14 +7,14 @@ interface ITornado {
 }
 
 /**
- * @title TornadoRouter
+ * @title zkPULSERouter
  * @dev Router contract to handle Tornado Cash deposits with a 0.5% service fee
- * @notice This contract allows users to make deposits with fees in a single transaction
- * @notice Fees are sent to zkPULSE_BuyandBurn contract for automatic token burning
+ * @notice Fees are automatically sent to zkPULSE_BuyandBurn contract for token burning
+ * @notice This creates a deflationary mechanism for zkPULSE token
  */
-contract TornadoRouter {
+contract zkPULSERouter {
     uint256 public constant FEE_PERCENT = 5; // 0.5% = 5/1000
-    address payable public immutable feeRecipient; // This will be the zkPULSE_BuyandBurn contract
+    address payable public immutable feeRecipient; // zkPULSE_BuyandBurn contract
     
     // Mapping of supported Tornado pool addresses
     mapping(address => bool) public supportedPools;
@@ -37,8 +37,8 @@ contract TornadoRouter {
     }
     
     /**
-     * @dev Constructor sets the fee recipient and adds initial supported pools
-     * @param _feeRecipient Address to receive the fees
+     * @dev Constructor sets the fee recipient (zkPULSE_BuyandBurn) and adds initial supported pools
+     * @param _feeRecipient Address of zkPULSE_BuyandBurn contract
      * @param _pools Array of Tornado pool addresses to support initially
      */
     constructor(address payable _feeRecipient, address[] memory _pools) {
@@ -58,6 +58,7 @@ contract TornadoRouter {
      * @dev Deposit to Tornado Cash with fee in a single transaction
      * @param _tornado Address of the Tornado pool contract
      * @param _commitment The deposit commitment
+     * Fee is sent to zkPULSE_BuyandBurn for automatic token burning
      */
     function depositWithFee(address _tornado, bytes32 _commitment) 
         external 
@@ -74,9 +75,9 @@ contract TornadoRouter {
         // Verify the correct amount was sent
         require(msg.value == totalRequired, "Incorrect amount sent");
         
-        // Send fee to recipient
+        // Send fee to zkPULSE_BuyandBurn contract (will auto-buy and burn)
         (bool feeSuccess, ) = feeRecipient.call{value: feeAmount}("");
-        require(feeSuccess, "Fee transfer failed");
+        require(feeSuccess, "Fee transfer to BuyAndBurn failed");
         
         // Deposit to Tornado pool
         ITornado(_tornado).deposit{value: denomination}(_commitment);
@@ -90,7 +91,7 @@ contract TornadoRouter {
      * @param _tornado Address of the Tornado pool
      * @return total Total amount needed including fee
      * @return depositAmount The denomination amount
-     * @return feeAmount The fee amount
+     * @return feeAmount The fee amount (sent to BuyAndBurn)
      */
     function calculateTotalAmount(address _tornado) 
         external 
@@ -116,6 +117,13 @@ contract TornadoRouter {
      */
     function getFeePercent() external pure returns (uint256) {
         return FEE_PERCENT;
+    }
+    
+    /**
+     * @dev Get the zkPULSE_BuyandBurn contract address
+     */
+    function getBuyAndBurnAddress() external view returns (address) {
+        return feeRecipient;
     }
     
     /**
