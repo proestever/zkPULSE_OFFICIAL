@@ -172,21 +172,7 @@ function updateUI() {
     if (userAccount && selectedDenomination) {
         depositBtn.disabled = false;
         const displayName = CONFIG.contracts[selectedDenomination].displayName;
-        const amount = CONFIG.contracts[selectedDenomination].amount;
-        const fee = parseFloat(amount) * 0.005;
-        const total = parseFloat(amount) + fee;
-        
-        // Format the total with appropriate units
-        let totalDisplay;
-        if (total >= 1000000000) {
-            totalDisplay = (total / 1000000000).toFixed(3) + 'B';
-        } else if (total >= 1000000) {
-            totalDisplay = (total / 1000000).toFixed(1) + 'M';
-        } else {
-            totalDisplay = total.toFixed(0);
-        }
-        
-        depositBtn.textContent = `Deposit ${displayName} (Total: ${totalDisplay} PLS with 0.5% fee)`;
+        depositBtn.textContent = `Deposit ${displayName}`;
     } else if (userAccount) {
         depositBtn.disabled = true;
         depositBtn.textContent = 'Select an amount';
