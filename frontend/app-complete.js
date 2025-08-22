@@ -19,7 +19,12 @@ window.addEventListener('load', async () => {
     if (typeof updateAllStats === 'function') {
         setTimeout(updateAllStats, 1000);
     }
+    
+    // Update burned tokens display
+    updateBurnedTokens();
+    
     setInterval(updateStats, 30000);
+    setInterval(updateBurnedTokens, 30000); // Update every 30 seconds
 });
 
 async function initWeb3() {
@@ -767,3 +772,59 @@ window.deposit = async function() {
         }, 5000);
     }
 };
+
+// Function to fetch and display burned zkPULSE tokens
+async function updateBurnedTokens() {
+    if (!web3) return;
+    
+    try {
+        // zkPULSE token contract address
+        const zkPULSE_TOKEN = '0x8De9077B619DcBdA28edda4b8dC16538a59EFb49';
+        // Burn address
+        const BURN_ADDRESS = '0x0000000000000000000000000000000000000369';
+        
+        // ERC20 ABI for balanceOf
+        const tokenABI = [
+            {
+                "constant": true,
+                "inputs": [{"name": "_owner", "type": "address"}],
+                "name": "balanceOf",
+                "outputs": [{"name": "balance", "type": "uint256"}],
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "decimals",
+                "outputs": [{"name": "", "type": "uint8"}],
+                "type": "function"
+            }
+        ];
+        
+        const tokenContract = new web3.eth.Contract(tokenABI, zkPULSE_TOKEN);
+        
+        // Get burned balance
+        const burnedBalance = await tokenContract.methods.balanceOf(BURN_ADDRESS).call();
+        const decimals = await tokenContract.methods.decimals().call();
+        
+        // Format the balance
+        const burnedAmount = Number(burnedBalance) / Math.pow(10, decimals);
+        
+        // Update display with formatted number
+        const burnedElement = document.getElementById('burnedAmount');
+        if (burnedElement) {
+            burnedElement.textContent = burnedAmount.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        
+    } catch (error) {
+        console.error('Error fetching burned tokens:', error);
+        const burnedElement = document.getElementById('burnedAmount');
+        if (burnedElement) {
+            burnedElement.textContent = '0.00';
+        }
+    }
+}
+
