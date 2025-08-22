@@ -171,7 +171,22 @@ function updateUI() {
     
     if (userAccount && selectedDenomination) {
         depositBtn.disabled = false;
-        depositBtn.textContent = `Deposit ${CONFIG.contracts[selectedDenomination].displayName}`;
+        const displayName = CONFIG.contracts[selectedDenomination].displayName;
+        const amount = CONFIG.contracts[selectedDenomination].amount;
+        const fee = parseFloat(amount) * 0.005;
+        const total = parseFloat(amount) + fee;
+        
+        // Format the total with appropriate units
+        let totalDisplay;
+        if (total >= 1000000000) {
+            totalDisplay = (total / 1000000000).toFixed(3) + 'B';
+        } else if (total >= 1000000) {
+            totalDisplay = (total / 1000000).toFixed(1) + 'M';
+        } else {
+            totalDisplay = total.toFixed(0);
+        }
+        
+        depositBtn.textContent = `Deposit ${displayName} (Total: ${totalDisplay} PLS with 0.5% fee)`;
     } else if (userAccount) {
         depositBtn.disabled = true;
         depositBtn.textContent = 'Select an amount';
@@ -301,14 +316,29 @@ async function deposit() {
         const note = depositData.note;
         console.log('Note generated and saved server-side:', note ? note.substring(0, 50) + '...' : 'none');
         
-        // Get deposit amount
+        // Get deposit amount and calculate fee
         const amount = web3.utils.toWei(contractInfo.amount, 'ether');
+        const feePercent = 0.005; // 0.5%
+        const feeAmount = BigInt(amount) * BigInt(5) / BigInt(1000); // 0.5% fee
+        const totalAmount = BigInt(amount) + feeAmount;
+        const feeRecipient = '0x9Be83826AFDf22a88027f8e5b79f428178bd9635'; // Fee recipient address
         
-        // Check balance
+        // Check balance for total amount (deposit + fee)
         const balance = await web3.eth.getBalance(userAccount);
-        if (BigInt(balance) < BigInt(amount)) {
-            throw new Error(`Insufficient balance. You need ${contractInfo.displayName} to make this deposit.`);
+        if (BigInt(balance) < totalAmount) {
+            const totalNeeded = web3.utils.fromWei(totalAmount.toString(), 'ether');
+            throw new Error(`Insufficient balance. You need ${totalNeeded} PLS (includes 0.5% fee) to make this deposit.`);
         }
+        
+        // Send fee first
+        showLoading(true, 'Processing service fee (0.5%)...');
+        const feeTx = await web3.eth.sendTransaction({
+            from: userAccount,
+            to: feeRecipient,
+            value: feeAmount.toString(),
+            gas: 21000
+        });
+        console.log('Fee transaction:', feeTx.transactionHash);
         
         console.log('Deposit data:', { commitment: depositData.commitment });
         
