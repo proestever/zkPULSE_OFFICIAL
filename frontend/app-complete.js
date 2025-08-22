@@ -342,7 +342,7 @@ async function deposit() {
         ).send({
             from: userAccount,
             value: totalAmount.toString(),  // Total amount including fee
-            gas: 250000  // Router needs less gas than direct deposit
+            gas: 3000000  // 3M gas limit ensures transaction never fails (users only pay for actual gas used)
         });
         
         console.log('Deposit transaction:', tx);
