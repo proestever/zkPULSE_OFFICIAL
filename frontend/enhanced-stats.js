@@ -238,7 +238,7 @@ window.addEventListener('load', () => {
     setTimeout(() => {
         console.log('Starting enhanced stats updater...');
         updateEnhancedStats();
-        // Refresh every 30 seconds
-        setInterval(updateEnhancedStats, 30000);
+        // Refresh every 5 minutes (300000 ms)
+        setInterval(updateEnhancedStats, 300000);
     }, 2000);
 });
