@@ -1,6 +1,6 @@
 // Enhanced statistics with active/withdrawn tracking and local storage
 async function updateEnhancedStats() {
-    console.log('Updating enhanced Tornado Cash statistics...');
+    // Removed console log to reduce spam
     
     // Show loading state for all stats
     const denominations = ['1M', '10M', '100M', '1B', 'total'];
@@ -146,7 +146,7 @@ async function updateEnhancedStats() {
                 balanceElement.textContent = formattedBalance;
             }
             
-            console.log(`${denom}: ${activeDeposits} active, ${depositCount} total, ${withdrawalCount} withdrawn`);
+            // Removed console log to reduce spam
             
         } catch (error) {
             console.error(`Error fetching stats for ${denom}:`, error);
@@ -236,7 +236,7 @@ window.updateAllStats = updateEnhancedStats;
 // Initialize on page load
 window.addEventListener('load', () => {
     setTimeout(() => {
-        console.log('Starting enhanced stats updater...');
+        // Initial stats update
         updateEnhancedStats();
         // Refresh every 5 minutes (300000 ms)
         setInterval(updateEnhancedStats, 300000);

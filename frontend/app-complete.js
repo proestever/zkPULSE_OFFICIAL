@@ -8,23 +8,20 @@ let isTransactionPending = false; // Prevent double transactions
 // Initialize app
 window.addEventListener('load', async () => {
     await initWeb3();
-    updateStats();
     
     // Initialize deposit tracker UI
     if (window.depositTracker) {
         window.depositTracker.updateUI();
     }
     
-    // Also call the new stats updater if it exists
-    if (typeof updateAllStats === 'function') {
-        setTimeout(updateAllStats, 1000);
-    }
+    // Stats are initialized by enhanced-stats.js automatically
+    // No need to call updateStats here
     
     // Update burned tokens display
     updateBurnedTokens();
     
-    setInterval(updateStats, 30000);
-    setInterval(updateBurnedTokens, 30000); // Update every 30 seconds
+    // Removed duplicate stats interval - handled by enhanced-stats.js
+    setInterval(updateBurnedTokens, 300000); // Update burned tokens every 5 minutes
 });
 
 async function initWeb3() {
@@ -249,9 +246,8 @@ function switchBottomTab(tab) {
         // Update stats when showing stats tab
         if (typeof displayPLSStats === 'function') {
             displayPLSStats();
-        } else if (typeof updateStats === 'function') {
-            updateStats();
         }
+        // Stats updates handled by enhanced-stats.js scheduled interval
     }
 }
 
@@ -435,7 +431,7 @@ ${CONFIG.explorerUrl}/tx/${tx.transactionHash}
             }
         }));
         
-        updateStats();
+        // Stats update handled by scheduled interval (every 5 mins)
         updateWalletButton(); // Update balance after deposit
         
     } catch (error) {
@@ -632,8 +628,7 @@ async function withdraw() {
         document.getElementById('withdrawNote').value = '';
         document.getElementById('recipientAddress').value = '';
         
-        // Update stats
-        updateStats();
+        // Stats update handled by scheduled interval (every 5 mins)
         updateWalletButton(); // Update balance after withdrawal
         
     } catch (error) {
