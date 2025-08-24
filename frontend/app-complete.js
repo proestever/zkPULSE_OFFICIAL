@@ -25,13 +25,26 @@ window.addEventListener('load', async () => {
 });
 
 async function initWeb3() {
-    if (typeof window.ethereum !== 'undefined') {
-        web3 = new Web3(window.ethereum);
-        
-        // Don't auto-connect, wait for user to click connect
-        updateUI();
-    } else {
-        showMessage('Please install MetaMask or another Web3 wallet', 'warning');
+    try {
+        // Handle multiple wallet extensions gracefully
+        if (typeof window.ethereum !== 'undefined') {
+            web3 = new Web3(window.ethereum);
+            
+            // Don't auto-connect, wait for user to click connect
+            updateUI();
+        } else {
+            showMessage('Please install MetaMask or another Web3 wallet', 'warning');
+        }
+    } catch (error) {
+        // Handle conflicts from multiple wallet extensions
+        console.warn('Wallet initialization error (possibly multiple wallets installed):', error.message);
+        if (window.ethereum) {
+            // Try to use ethereum object even if there was an error
+            web3 = new Web3(window.ethereum);
+            updateUI();
+        } else {
+            showMessage('Wallet conflict detected. Please disable extra wallet extensions.', 'warning');
+        }
     }
 }
 
