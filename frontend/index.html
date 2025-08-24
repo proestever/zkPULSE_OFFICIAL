@@ -695,13 +695,6 @@
         </div>
         
         <div id="depositTab">
-            <!-- Token selector hidden - only PLS supported -->
-            <div style="display: none;">
-                <button class="token-btn active" id="token-PLS" onclick="selectTokenNow('PLS')" style="border: none; outline: none;">
-                    <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS">
-                    PLS
-                </button>
-            </div>
             
             <h3 style="margin-bottom: 15px;">Select Amount</h3>
             <div class="denomination-grid" id="denominationGrid">
@@ -900,10 +893,10 @@
          it means you have multiple wallet extensions installed.
          This is handled gracefully but you may want to disable extra wallets. -->
     
-    <!-- Define token selection function FIRST before anything else -->
+    <!-- Token selection removed - only PLS supported -->
     <script>
-        // This MUST be defined first so buttons can use it
-        window.selectTokenNow = function(token) {
+        // Removed token selection - only PLS supported now
+        /*window.selectTokenNow = function(token) {
             // Update state
             window.selectedToken = token;
             selectedDenomination = null;
@@ -953,12 +946,9 @@
             if (typeof updateDepositButton === 'function') {
                 updateDepositButton();
             }
-        };
+        };*/
         
-        // Alias for compatibility
-        window.selectToken = window.selectTokenNow;
-        
-        // Also define selectDenomination globally so it works for all cards
+        // Simplified selectDenomination for PLS only
         window.selectDenomination = function(denom) {
             selectedDenomination = denom;
             window.selectedDenomination = denom;
@@ -976,11 +966,10 @@
             // Update deposit button
             const btn = document.getElementById('depositBtn');
             if (btn && userAccount) {
-                const tokenSymbol = window.selectedToken || 'PLS';
-                btn.textContent = `Deposit ${denom} ${tokenSymbol}`;
+                btn.textContent = `Deposit ${denom} PLS`;
                 btn.disabled = false;
             } else if (btn) {
-                btn.textContent = userAccount ? `Deposit ${denom} ${window.selectedToken || 'PLS'}` : 'Connect Wallet First';
+                btn.textContent = userAccount ? `Deposit ${denom} PLS` : 'Connect Wallet First';
                 btn.disabled = !userAccount;
             }
             
@@ -991,19 +980,15 @@
         };
     </script>
     <script src="config-all-denominations.js"></script>
-    <script src="config-pcock.js"></script>
     <script src="tornado-api.js"></script>
     <script src="withdrawal-complete.js"></script>
     <script src="deposit-tracker.js"></script>
     <script src="deposit-recovery.js"></script>
     <script src="app-complete.js"></script>
     <script src="enhanced-stats.js"></script>
-    <script src="pcock-withdrawal-fix.js"></script>
     
     <!-- Matrix Background Animation Script -->
     <script>
-        // Token state (already defined globally above)
-        window.selectedToken = window.selectedToken || 'PLS';
         
         // Copy functions need to be global
         window.copySupportAddress = function() {
@@ -1100,16 +1085,6 @@
         formatAddressDisplay();
         window.addEventListener('resize', formatAddressDisplay);
         
-        // Removed duplicate token code to prevent conflicts
-        
-        // Helper function to update stats based on token
-        function updateTokenStats() {
-            const statsContainer = document.getElementById('statsContainer');
-            if (!statsContainer) return;
-            
-            // Always show PLS stats
-            displayPLSStats();
-        }
         
         // Display PLS network stats
         function displayPLSStats() {
@@ -1164,50 +1139,9 @@
         // Alias for compatibility
         window.updateStats = displayPLSStats;
         
-        // Update balance display for selected token
-        window.updateBalanceForToken = async function(token) {
-            if (!userAccount || !web3) return;
-            
-            let balance;
-            let symbol;
-            
-            if (token === 'PLS') {
-                balance = await web3.eth.getBalance(userAccount);
-                balance = web3.utils.fromWei(balance, 'ether');
-                symbol = 'PLS';
-            } else {
-                // Get PCOCK balance
-                const tokenABI = [
-                    {
-                        "inputs": [{"name": "account", "type": "address"}],
-                        "name": "balanceOf",
-                        "outputs": [{"name": "", "type": "uint256"}],
-                        "stateMutability": "view",
-                        "type": "function"
-                    }
-                ];
-                
-                const PCOCK_ADDRESS = '0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F';
-                const tokenContract = new web3.eth.Contract(tokenABI, PCOCK_ADDRESS);
-                const rawBalance = await tokenContract.methods.balanceOf(userAccount).call();
-                balance = web3.utils.fromWei(rawBalance, 'ether');
-                symbol = 'PCOCK';
-            }
-            
-            // Display balance
-            let balanceDisplay = document.getElementById('balanceDisplay');
-            if (!balanceDisplay) {
-                const walletBtn = document.getElementById('walletButton');
-                balanceDisplay = document.createElement('div');
-                balanceDisplay.id = 'balanceDisplay';
-                balanceDisplay.style.cssText = 'position: fixed; top: 60px; right: 20px; background: rgba(10, 10, 10, 0.7); padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(0, 255, 65, 0.2); color: #00ff41; font-size: 12px;';
-                walletBtn.parentNode.insertBefore(balanceDisplay, walletBtn.nextSibling);
-            }
-            balanceDisplay.textContent = `Balance: ${parseFloat(balance).toFixed(2)} ${symbol}`;
-        };
+        // Balance display is handled in app-complete.js
         
-        // Override the updateDepositButton function to handle tokens
-        const originalUpdateDepositButton = window.updateDepositButton || function() {};
+        // Simplified updateDepositButton for PLS only
         window.updateDepositButton = function() {
             const btn = document.getElementById('depositBtn');
             if (!userAccount) {
@@ -1217,46 +1151,15 @@
                 btn.textContent = 'Select Amount';
                 btn.disabled = true;
             } else {
-                const tokenSymbol = window.selectedToken || 'PLS';
-                btn.textContent = `Deposit ${selectedDenomination} ${tokenSymbol}`;
+                btn.textContent = `Deposit ${selectedDenomination} PLS`;
                 btn.disabled = false;
             }
         };
         
-        // Override deposit function to handle PCOCK (check if already defined)
-        if (typeof window.originalDeposit === 'undefined') {
-            window.originalDeposit = window.deposit || function() {};
-        }
-        window.deposit = async function() {
-            if (!userAccount || !selectedDenomination) {
-                showMessage('Please connect wallet and select an amount', 'error');
-                return;
-            }
-            
-            const currentToken = window.selectedToken || 'PLS';
-            
-            try {
-                showLoading(true);
-                
-                if (currentToken === 'PLS') {
-                    // Use original PLS deposit logic
-                    if (window.originalDeposit) {
-                        return await window.originalDeposit();
-                    }
-                } else if (currentToken === 'PCOCK') {
-                    // Handle PCOCK deposit
-                    await depositPCOCK();
-                }
-            } catch (error) {
-                console.error('Deposit error:', error);
-                showMessage('Deposit failed: ' + error.message, 'error');
-            } finally {
-                showLoading(false);
-            }
-        };
+        // Deposit function is handled by app-complete.js
         
-        // PCOCK deposit function
-        async function depositPCOCK() {
+        // Removed PCOCK support
+        /*async function depositPCOCK() {
             const PCOCK_TORNADO_ADDRESS = '0x5915Dc6C5a3D2F06DB93bc763334D2e8F5D1A8C3';
             const PCOCK_TOKEN_ADDRESS = '0xc10A4Ed9b4042222d69ff0B374eddd47ed90fC1F';
             
@@ -1359,43 +1262,9 @@
             document.getElementById('depositNote').classList.remove('hidden');
             
             showMessage(`Successfully deposited ${amount} PCOCK! Save your note!`, 'success');
-        };
+        };*/
     </script>
     
-    <!-- Fix PCOCK button click -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Ensure PCOCK button is clickable
-        const pcockBtn = document.getElementById('token-PCOCK');
-        if (pcockBtn) {
-            pcockBtn.style.cursor = 'pointer';
-            pcockBtn.onclick = function() {
-                if (typeof selectTokenNow !== 'undefined') {
-                    selectTokenNow('PCOCK');
-                } else if (typeof window.selectToken !== 'undefined') {
-                    window.selectToken('PCOCK');
-                } else {
-                    console.error('Token selection function not found');
-                }
-            };
-        }
-        
-        // Ensure PLS button is clickable
-        const plsBtn = document.getElementById('token-PLS');
-        if (plsBtn) {
-            plsBtn.style.cursor = 'pointer';
-            plsBtn.onclick = function() {
-                if (typeof selectTokenNow !== 'undefined') {
-                    selectTokenNow('PLS');
-                } else if (typeof window.selectToken !== 'undefined') {
-                    window.selectToken('PLS');
-                } else {
-                    console.error('Token selection function not found');
-                }
-            };
-        }
-    });
-    </script>
     
     <!-- Separate animation script to ensure it runs independently -->
     <script>
