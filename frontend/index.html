@@ -1314,12 +1314,19 @@
                 showMessage('Approval successful! Now depositing...', 'success');
             }
             
-            // Generate commitment CLIENT-SIDE for privacy
-            const depositData = await window.clientDeposit.generate('10K');
-            const deposit = {
-                commitment: BigInt(depositData.commitment),
-                noteHex: depositData.noteHex
-            };
+            // Generate commitment - check if tornadoAPI exists
+            let deposit;
+            if (window.tornadoAPI && window.tornadoAPI.generateDeposit) {
+                // Use the existing tornado API that has Pedersen hash
+                deposit = window.tornadoAPI.generateDeposit();
+            } else {
+                // Fallback to server API for Pedersen hash (server doesn't store)
+                const depositData = await window.createDepositViaAPI(null, '10K');
+                deposit = {
+                    commitment: BigInt(depositData.commitment),
+                    noteHex: depositData.preimageHex || depositData.noteHex
+                };
+            }
             
             const commitment = '0x' + deposit.commitment.toString(16).padStart(64, '0');
             
