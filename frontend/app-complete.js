@@ -300,12 +300,22 @@ async function deposit() {
         const contractInfo = CONFIG.contracts[selectedDenomination];
         const contract = new web3.eth.Contract(CONFIG.tornadoABI, contractInfo.address);
         
-        // Generate commitment using API (no wallet tracking for privacy)
-        const depositData = await window.createDepositViaAPI(null, selectedDenomination);
-        
-        // Note is already generated and saved server-side!
+        // Generate commitment CLIENT-SIDE for maximum privacy
+        const depositData = await window.clientDeposit.generate(selectedDenomination);
         const note = depositData.note;
-        console.log('Note generated and saved server-side:', note ? note.substring(0, 50) + '...' : 'none');
+        
+        // Save to localStorage immediately for recovery
+        const deposits = JSON.parse(localStorage.getItem('zkpulse_deposits') || '[]');
+        deposits.push({
+            note: note,
+            amount: selectedDenomination,
+            timestamp: Date.now(),
+            commitment: depositData.commitment,
+            status: 'pending'
+        });
+        localStorage.setItem('zkpulse_deposits', JSON.stringify(deposits));
+        
+        console.log('Deposit generated locally - no server storage');
         
         // Get deposit amount and calculate fee
         const amount = web3.utils.toWei(contractInfo.amount, 'ether');
@@ -334,7 +344,8 @@ async function deposit() {
             throw new Error(`Insufficient balance. You need ${totalNeeded} PLS (includes 0.5% fee) to make this deposit.`);
         }
         
-        console.log('Deposit data:', { commitment: depositData.commitment });
+        // Don't log sensitive data
+        console.log('Processing deposit...');
         
         // Update loading message before wallet interaction
         showLoading(true, 'Processing deposit with fee (single transaction)...');
@@ -350,11 +361,16 @@ async function deposit() {
             gas: 3000000  // 3M gas limit ensures transaction never fails (users only pay for actual gas used)
         });
         
-        console.log('Deposit transaction:', tx);
+        console.log('Deposit transaction completed');
         
-        // No server tracking - everything stays local for privacy
-        
-        // Note already exists from server generation, just use it
+        // Update localStorage with transaction hash
+        const savedDeposits = JSON.parse(localStorage.getItem('zkpulse_deposits') || '[]');
+        const depositIndex = savedDeposits.findIndex(d => d.commitment === depositData.commitment);
+        if (depositIndex !== -1) {
+            savedDeposits[depositIndex].status = 'completed';
+            savedDeposits[depositIndex].txHash = tx.transactionHash;
+            localStorage.setItem('zkpulse_deposits', JSON.stringify(savedDeposits));
+        }
         
         // Display note
         document.getElementById('noteText').textContent = note;
@@ -435,24 +451,25 @@ ${CONFIG.explorerUrl}/tx/${tx.transactionHash}
     }
 }
 
-// Check for pending deposits from server
-async function checkPendingDeposits() {
+// Check for pending deposits from localStorage
+function checkPendingDeposits() {
     if (!userAccount) return;
     
     try {
-        const pending = await getPendingDeposits(userAccount);
+        const deposits = JSON.parse(localStorage.getItem('zkpulse_deposits') || '[]');
+        const pending = deposits.filter(d => d.status === 'pending');
         
         if (pending.length > 0) {
-            // Show recovery UI for server-stored deposits
-            showServerPendingDeposits(pending);
+            // Show recovery UI for locally-stored deposits
+            showLocalPendingDeposits(pending);
         }
     } catch (error) {
         console.error('Error checking pending deposits:', error);
     }
 }
 
-// Show pending deposits from server
-function showServerPendingDeposits(deposits) {
+// Show pending deposits from localStorage
+function showLocalPendingDeposits(deposits) {
     const recoveryHtml = `
         <div id="serverRecoveryAlert" style="
             position: fixed;
@@ -469,7 +486,7 @@ function showServerPendingDeposits(deposits) {
         ">
             <h4 style="color: #ffc107; margin: 0 0 10px 0;">⚠️ Pending Deposits Found!</h4>
             <p style="color: #e0e0e0; font-size: 14px; margin-bottom: 15px;">
-                You have ${deposits.length} deposit(s) saved on the server that haven't been completed.
+                You have ${deposits.length} deposit(s) saved locally that haven't been completed.
             </p>
             <div style="max-height: 300px; overflow-y: auto;">
                 ${deposits.map(d => `
@@ -485,7 +502,7 @@ function showServerPendingDeposits(deposits) {
                             <span style="color: #a0a0a0; font-size: 12px;">${new Date(d.timestamp).toLocaleString()}</span>
                         </div>
                         <div style="margin-top: 8px;">
-                            <button onclick="copyServerNote('${d.note}')" style="
+                            <button onclick="copyLocalNote('${d.note}')" style="
                                 background: rgba(10, 10, 10, 0.7);
                                 color: #ffc107;
                                 border: 1px solid #ffc107;
@@ -495,7 +512,7 @@ function showServerPendingDeposits(deposits) {
                                 font-size: 12px;
                                 margin-right: 5px;
                             ">Copy Note</button>
-                            <button onclick="saveServerNote('${d.note}', '${d.amount}')" style="
+                            <button onclick="saveLocalNote('${d.note}', '${d.amount}')" style="
                                 background: rgba(10, 10, 10, 0.7);
                                 color: #00ff41;
                                 border: 1px solid #00ff41;
@@ -508,7 +525,7 @@ function showServerPendingDeposits(deposits) {
                     </div>
                 `).join('')}
             </div>
-            <button onclick="dismissServerRecovery()" style="
+            <button onclick="dismissLocalRecovery()" style="
                 width: 100%;
                 margin-top: 10px;
                 background: rgba(10, 10, 10, 0.7);
@@ -530,8 +547,8 @@ function showServerPendingDeposits(deposits) {
     document.body.insertAdjacentHTML('beforeend', recoveryHtml);
 }
 
-// Helper functions for server recovery
-window.copyServerNote = function(note) {
+// Helper functions for local recovery
+window.copyLocalNote = function(note) {
     navigator.clipboard.writeText(note);
     const btn = event.target;
     const originalText = btn.textContent;
@@ -543,7 +560,7 @@ window.copyServerNote = function(note) {
     }, 2000);
 };
 
-window.saveServerNote = function(note, amount) {
+window.saveLocalNote = function(note, amount) {
     const blob = new Blob([note], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -552,7 +569,7 @@ window.saveServerNote = function(note, amount) {
     a.click();
 };
 
-window.dismissServerRecovery = function() {
+window.dismissLocalRecovery = function() {
     const alert = document.getElementById('serverRecoveryAlert');
     if (alert) alert.remove();
 };
