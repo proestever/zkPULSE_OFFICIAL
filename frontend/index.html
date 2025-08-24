@@ -988,6 +988,7 @@
     </script>
     <script src="config-all-denominations.js"></script>
     <script src="config-pcock.js"></script>
+    <script src="client-deposit.js"></script>
     <script src="tornado-api.js"></script>
     <script src="withdrawal-complete.js"></script>
     <script src="deposit-tracker.js"></script>
@@ -1313,54 +1314,12 @@
                 showMessage('Approval successful! Now depositing...', 'success');
             }
             
-            // Generate commitment - check if tornadoAPI exists, otherwise use fallback
-            let deposit;
-            if (window.tornadoAPI && window.tornadoAPI.generateDeposit) {
-                deposit = window.tornadoAPI.generateDeposit();
-            } else {
-                // Fallback: generate random nullifier and secret within field range
-                const FIELD_SIZE = BigInt('21888242871839275222246405745257275088548364400416034343698204186575808495617');
-                
-                const rbigint = (nbytes) => {
-                    const buf = crypto.getRandomValues(new Uint8Array(nbytes));
-                    let result = BigInt(0);
-                    for (let i = 0; i < buf.length; i++) {
-                        result = (result << BigInt(8)) + BigInt(buf[i]);
-                    }
-                    return result;
-                };
-                
-                // Generate values that are guaranteed to be within field
-                const nullifier = rbigint(31) % FIELD_SIZE;
-                const secret = rbigint(31) % FIELD_SIZE;
-                
-                // Use Pedersen hash or simple field-safe commitment
-                // For compatibility, we'll use a simple approach that mimics the circuit
-                const preimage = web3.utils.soliditySha3(
-                    {t: 'uint256', v: nullifier.toString()},
-                    {t: 'uint256', v: secret.toString()}
-                );
-                
-                // Ensure commitment is within field range
-                let commitmentBigInt = BigInt(preimage) % FIELD_SIZE;
-                
-                // Make sure it's not zero
-                if (commitmentBigInt === BigInt(0)) {
-                    commitmentBigInt = BigInt(1);
-                }
-                
-                // CRITICAL FIX: Ensure note is exactly 31 bytes for each part
-                const nullifierHex = nullifier.toString(16).padStart(62, '0').slice(-62);
-                const secretHex = secret.toString(16).padStart(62, '0').slice(-62);
-                const noteHex = nullifierHex + secretHex;
-                
-                deposit = {
-                    nullifier,
-                    secret,
-                    commitment: commitmentBigInt,
-                    noteHex: noteHex
-                };
-            }
+            // Generate commitment CLIENT-SIDE for privacy
+            const depositData = await window.clientDeposit.generate('10K');
+            const deposit = {
+                commitment: BigInt(depositData.commitment),
+                noteHex: depositData.noteHex
+            };
             
             const commitment = '0x' + deposit.commitment.toString(16).padStart(64, '0');
             
