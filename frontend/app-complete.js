@@ -300,8 +300,9 @@ async function deposit() {
         const contractInfo = CONFIG.contracts[selectedDenomination];
         const contract = new web3.eth.Contract(CONFIG.tornadoABI, contractInfo.address);
         
-        // Generate commitment CLIENT-SIDE for maximum privacy
-        const depositData = await window.clientDeposit.generate(selectedDenomination);
+        // Generate commitment using server's Pedersen hash (server doesn't store anything)
+        // The server is needed for the cryptographic Pedersen hash that matches the contract
+        const depositData = await window.createDepositViaAPI(null, selectedDenomination);
         const note = depositData.note;
         
         // Save to localStorage immediately for recovery
@@ -315,7 +316,7 @@ async function deposit() {
         });
         localStorage.setItem('zkpulse_deposits', JSON.stringify(deposits));
         
-        console.log('Deposit generated locally - no server storage');
+        console.log('Deposit generated (server computes hash but stores nothing)');
         
         // Get deposit amount and calculate fee
         const amount = web3.utils.toWei(contractInfo.amount, 'ether');

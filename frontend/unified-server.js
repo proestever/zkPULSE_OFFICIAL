@@ -208,10 +208,13 @@ async function saveDepositForWallet(walletAddress, depositData) {
 
 // API endpoint for deposit (NO wallet tracking for privacy)
 app.post('/api/deposit', async (req, res) => {
+    // PRIVACY NOTE: This endpoint ONLY generates the cryptographic commitment
+    // using Pedersen hash. NO DATA IS STORED on the server.
+    // The note is sent back to the client and saved ONLY in their browser.
     try {
         const { amount: reqAmount } = req.body;
         
-        console.log('Generating Pedersen deposit...');
+        console.log('Generating Pedersen deposit (no server storage)...');
         
         const deposit = createDeposit({ 
             nullifier: rbigint(31), 
