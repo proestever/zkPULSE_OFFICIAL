@@ -6,9 +6,9 @@
     <title>ZK Pulse - Private Transactions on PulseChain</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/branding/logos/zkpulse_favicon.png">
-    <link rel="shortcut icon" type="image/png" href="/branding/logos/zkpulse_favicon.png">
-    <link rel="apple-touch-icon" href="/branding/logos/zkpulse_favicon.png">
+    <link rel="icon" type="image/png" href="../branding/logos/zkpulse_favicon.png">
+    <link rel="shortcut icon" type="image/png" href="../branding/logos/zkpulse_favicon.png">
+    <link rel="apple-touch-icon" href="../branding/logos/zkpulse_favicon.png">
     
     <!-- Primary Meta Tags -->
     <meta name="title" content="ZK Pulse - Private Transactions on PulseChain">
@@ -255,7 +255,7 @@
         .denomination-card {
             border: 2px solid rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            padding: 20px;
+            padding: 15px;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
@@ -266,13 +266,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 120px;
+            min-height: 80px;
         }
         
         .pls-logo {
-            height: 14px;
-            width: auto;
-            margin-left: 6px;
+            height: 18px;
+            width: 18px;
             vertical-align: middle;
             display: inline-block;
         }
@@ -291,14 +290,18 @@
         }
         
         .denomination-amount {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .denomination-label {
             color: #a0a0a0;
             margin-top: 5px;
+            font-size: 11px;
         }
         
         .input-group {
@@ -501,7 +504,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 10px;
+            padding: 8px 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             transition: all 0.3s;
         }
@@ -516,16 +519,15 @@
 
         .stat-row.total {
             margin-top: 10px;
-            padding-top: 20px;
-            border-top: 2px solid #00ff41;
+            padding-top: 12px;
+            border-top: 2px solid rgba(0, 255, 65, 0.5);
             border-bottom: none;
-            background: linear-gradient(135deg, rgba(0, 255, 65, 0.1) 0%, rgba(0, 184, 47, 0.1) 100%);
         }
 
         .stat-denomination {
             font-weight: 600;
             color: #ffffff;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .stat-info {
@@ -536,25 +538,25 @@
 
         .stat-deposits {
             color: #a0a0a0;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .stat-balance {
             color: #00ff41;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 12px;
             min-width: 100px;
             text-align: right;
         }
 
         .stat-row.total .stat-balance {
-            font-size: 16px;
-            color: #00ff88;
+            font-size: 14px;
+            color: #00ff41;
         }
 
         .stat-row.total .stat-deposits {
-            font-size: 16px;
-            color: #ffffff;
+            font-size: 14px;
+            color: #a0a0a0;
         }
         
         .bottom-section {
@@ -685,7 +687,7 @@
     <!-- Balance Display (appears after wallet connection) -->
     
     <div class="container">
-        <img src="/branding/logos/zkbanner_main.png" alt="ZK Pulse" style="width: 100%; max-width: 320px; height: auto; margin: 15px auto 25px auto; padding: 5px; display: block;">
+        <img src="../branding/logos/zkbanner_main.png" alt="ZK Pulse" style="width: 100%; max-width: 320px; height: auto; margin: 15px auto 25px auto; padding: 5px; display: block;">
         
         <div class="tabs">
             <div class="tab active" onclick="switchTab('deposit')">Deposit</div>
@@ -704,24 +706,20 @@
             <h3 style="margin-bottom: 15px;">Select Amount</h3>
             <div class="denomination-grid" id="denominationGrid">
                 <div class="denomination-card" onclick="selectDenomination('1M')">
-                    <div class="denomination-amount">1M</div>
-                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                    <div style="font-size: 11px; color: #888; margin-top: 5px;">+0.5% fee (5,000 PLS)</div>
+                    <div class="denomination-amount">1M PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    <div class="denomination-label">+0.5% fee (5,000 PLS)</div>
                 </div>
                 <div class="denomination-card" onclick="selectDenomination('10M')">
-                    <div class="denomination-amount">10M</div>
-                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                    <div style="font-size: 11px; color: #888; margin-top: 5px;">+0.5% fee (50,000 PLS)</div>
+                    <div class="denomination-amount">10M PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    <div class="denomination-label">+0.5% fee (50,000 PLS)</div>
                 </div>
                 <div class="denomination-card" onclick="selectDenomination('100M')">
-                    <div class="denomination-amount">100M</div>
-                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                    <div style="font-size: 11px; color: #888; margin-top: 5px;">+0.5% fee (500,000 PLS)</div>
+                    <div class="denomination-amount">100M PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    <div class="denomination-label">+0.5% fee (500,000 PLS)</div>
                 </div>
                 <div class="denomination-card" onclick="selectDenomination('1B')">
-                    <div class="denomination-amount">1B</div>
-                    <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
-                    <div style="font-size: 11px; color: #888; margin-top: 5px;">+0.5% fee (5M PLS)</div>
+                    <div class="denomination-amount">1B PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                    <div class="denomination-label">+0.5% fee (5M PLS)</div>
                 </div>
             </div>
             
@@ -799,7 +797,7 @@
             <a href="https://github.com/proestever/Pulsechain_Tornado_Cash_zkPULSE" target="_blank" style="color: #00ff41; text-decoration: none; padding: 10px 20px; border: 1px solid #00ff41; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.5); transition: all 0.3s; font-size: 14px; font-weight: 500; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); height: 40px;" 
                onmouseover="this.style.background='rgba(0, 255, 65, 0.1)'; this.style.boxShadow='0 0 25px rgba(0, 255, 65, 0.4)';" 
                onmouseout="this.style.background='rgba(0, 0, 0, 0.5)'; this.style.boxShadow='0 0 15px rgba(0, 255, 65, 0.2)';">
-                <img src="/branding/logos/githublogo_zkpulse.png" alt="GitHub" style="width: 20px; height: 20px;">
+                <img src="../branding/logos/githublogo_zkpulse.png" alt="GitHub" style="width: 20px; height: 20px;">
                 GitHub
             </a>
             <a href="https://libertyswap.finance/" target="_blank" style="color: #00ff41; text-decoration: none; padding: 10px 20px; border: 1px solid #00ff41; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.5); transition: all 0.3s; font-size: 14px; font-weight: 500; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); height: 40px;" 
@@ -843,6 +841,56 @@
                 </span>
                 <span style="color: #ff8c00; font-size: 12px; margin-left: 5px;">zkPULSE</span>
             </div>
+            <script>
+                // Load zkPULSE burned amount
+                async function loadZkPulseBurned() {
+                    try {
+                        if (typeof web3 === 'undefined' || !web3) {
+                            if (typeof Web3 !== 'undefined') {
+                                window.web3 = new Web3('https://rpc.pulsechain.com');
+                            } else {
+                                setTimeout(loadZkPulseBurned, 2000);
+                                return;
+                            }
+                        }
+                        
+                        const zkPulseTokenAddress = '0x8De9077B619DcBdA28edda4b8dC16538a59EFb49';
+                        const burnAddress = '0x0000000000000000000000000000000000000369';
+                        
+                        const tokenABI = [
+                            {
+                                "inputs": [{"name": "account", "type": "address"}],
+                                "name": "balanceOf",
+                                "outputs": [{"name": "", "type": "uint256"}],
+                                "stateMutability": "view",
+                                "type": "function"
+                            }
+                        ];
+                        
+                        const tokenContract = new web3.eth.Contract(tokenABI, zkPulseTokenAddress);
+                        const burnedBalance = await tokenContract.methods.balanceOf(burnAddress).call();
+                        const burnedAmount = parseFloat(web3.utils.fromWei(burnedBalance, 'ether'));
+                        
+                        // Format the number with commas
+                        const formattedAmount = burnedAmount.toLocaleString('en-US', {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        });
+                        
+                        document.getElementById('burnedAmount').textContent = formattedAmount;
+                    } catch (error) {
+                        console.error('Error loading zkPULSE burned amount:', error);
+                        document.getElementById('burnedAmount').textContent = 'Error loading';
+                    }
+                }
+                
+                // Load on page load
+                window.addEventListener('load', () => {
+                    setTimeout(loadZkPulseBurned, 1000);
+                    // Refresh every 5 minutes
+                    setInterval(loadZkPulseBurned, 300000);
+                });
+            </script>
         </div>
     </div>
     
@@ -872,27 +920,27 @@
             if (token === 'PLS') {
                 gridContainer.innerHTML = `
                     <div class="denomination-card" onclick="selectDenomination('1M')">
-                        <div class="denomination-amount">1M</div>
-                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                        <div class="denomination-amount">1M PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                        <div class="denomination-label">+0.5% fee (5,000 PLS)</div>
                     </div>
                     <div class="denomination-card" onclick="selectDenomination('10M')">
-                        <div class="denomination-amount">10M</div>
-                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                        <div class="denomination-amount">10M PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                        <div class="denomination-label">+0.5% fee (50,000 PLS)</div>
                     </div>
                     <div class="denomination-card" onclick="selectDenomination('100M')">
-                        <div class="denomination-amount">100M</div>
-                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                        <div class="denomination-amount">100M PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                        <div class="denomination-label">+0.5% fee (500,000 PLS)</div>
                     </div>
                     <div class="denomination-card" onclick="selectDenomination('1B')">
-                        <div class="denomination-amount">1B</div>
-                        <div class="denomination-label">PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                        <div class="denomination-amount">1B PLS <img src="https://tokens.app.pulsex.com/images/tokens/0xA1077a294dDE1B09bB078844df40758a5D0f9a27.png" alt="PLS" class="pls-logo"></div>
+                        <div class="denomination-label">+0.5% fee (5M PLS)</div>
                     </div>
                 `;
             } else if (token === 'PCOCK') {
                 gridContainer.innerHTML = `
                     <div class="denomination-card" onclick="selectDenomination('10K')" style="grid-column: span 2;">
-                        <div class="denomination-amount">10K</div>
-                        <div class="denomination-label">PCOCK <img src="/branding/logos/peacocklogo.webp" alt="PCOCK" class="pls-logo"></div>
+                        <div class="denomination-amount">10K PCOCK <img src="../branding/logos/peacocklogo.webp" alt="PCOCK" class="pls-logo"></div>
+                        <div class="denomination-label">No additional fee</div>
                     </div>
                 `;
             }
