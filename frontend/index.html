@@ -896,6 +896,10 @@
     
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
     
+    <!-- Note: If you see "Cannot redefine property: ethereum" error, 
+         it means you have multiple wallet extensions installed.
+         This is handled gracefully but you may want to disable extra wallets. -->
+    
     <!-- Define token selection function FIRST before anything else -->
     <script>
         // This MUST be defined first so buttons can use it
@@ -988,7 +992,6 @@
     </script>
     <script src="config-all-denominations.js"></script>
     <script src="config-pcock.js"></script>
-    <script src="client-deposit.js"></script>
     <script src="tornado-api.js"></script>
     <script src="withdrawal-complete.js"></script>
     <script src="deposit-tracker.js"></script>
