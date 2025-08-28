@@ -113,6 +113,7 @@ async function monitorRelayerJob(relayerUrl, jobId) {
                 };
             } else if (jobStatus.status === 'failed') {
                 console.error('Job failed with error:', jobStatus.error);
+                // IMPORTANT: Return immediately on failure, don't continue the loop
                 throw new Error(jobStatus.error || 'Relayer job failed');
             }
 
@@ -127,9 +128,9 @@ async function monitorRelayerJob(relayerUrl, jobId) {
 
         } catch (error) {
             console.error('Error checking job status:', error);
-            if (attempts >= maxAttempts - 1) {
-                throw new Error('Timeout waiting for relayer to process transaction');
-            }
+            // Re-throw the error immediately to stop the loop
+            // This includes job failures and network errors
+            throw error;
         }
     }
 
