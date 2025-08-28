@@ -23,7 +23,7 @@ app.use(helmet({
 // Security: Configure CORS properly
 const allowedOrigins = process.env.ALLOWED_ORIGINS ? 
     process.env.ALLOWED_ORIGINS.split(',') : 
-    ['http://localhost:8888', 'http://localhost:3000'];
+    ['http://localhost:8888', 'http://localhost:3000', 'https://development-zkpulse.onrender.com', 'https://development-zkpulse-1.onrender.com'];
 
 app.use(cors({
     origin: function(origin, callback) {
