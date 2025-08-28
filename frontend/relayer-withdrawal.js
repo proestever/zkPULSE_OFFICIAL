@@ -55,8 +55,22 @@ async function executeRelayerWithdrawal(noteInput, recipientAddress) {
         });
 
         if (!relayerResponse.ok) {
-            const error = await relayerResponse.json();
-            throw new Error(error.error || 'Relayer submission failed');
+            // Handle rate limiting specifically
+            if (relayerResponse.status === 429) {
+                const retryAfter = relayerResponse.headers.get('Retry-After') || '60';
+                throw new Error(`Rate limit exceeded. Please wait ${retryAfter} seconds before trying again.`);
+            }
+            
+            // Try to parse error response
+            let errorMessage = 'Relayer submission failed';
+            try {
+                const error = await relayerResponse.json();
+                errorMessage = error.error || error.message || errorMessage;
+            } catch (e) {
+                // If response is not JSON, use status text
+                errorMessage = relayerResponse.statusText || errorMessage;
+            }
+            throw new Error(errorMessage);
         }
 
         const relayerResult = await relayerResponse.json();

@@ -54,11 +54,18 @@ const limiter = rateLimit({
 // Apply rate limiting to all routes
 app.use(limiter);
 
-// Stricter rate limiting for withdrawal endpoint
+// Stricter rate limiting for withdrawal endpoint (adjusted for testing)
 const withdrawLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 10, // Limit each IP to 10 withdrawal requests per windowMs
+    max: 50, // Limit each IP to 50 withdrawal requests per windowMs (increased for testing)
     message: 'Too many withdrawal requests, please try again later.',
+    standardHeaders: true, // Return rate limit info in headers
+    legacyHeaders: false,
+    // Skip rate limiting for localhost during development
+    skip: (req) => {
+        const ip = req.ip || req.connection.remoteAddress;
+        return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+    }
 });
 
 // Configuration
