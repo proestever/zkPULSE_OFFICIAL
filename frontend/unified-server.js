@@ -10,6 +10,7 @@ const MerkleTree = require('fixed-merkle-tree');
 const { Web3 } = require('web3');
 const buildGroth16 = require('websnark/src/groth16');
 const websnarkUtils = require('websnark/src/utils');
+const { relayerConfig, calculateRelayerFee, getActiveRelayers } = require('./relayer-config');
 
 const app = express();
 const PORT = process.env.PORT || 8888;
@@ -131,7 +132,7 @@ async function generateMerkleProof(deposit, contractAddress) {
 /**
  * Generate SNARK proof for withdrawal
  */
-async function generateProof({ deposit, recipient, contractAddress }) {
+async function generateProof({ deposit, recipient, contractAddress, relayerAddress = null, fee = 0 }) {
     const { root, pathElements, pathIndices } = await generateMerkleProof(deposit, contractAddress);
     
     // Prepare circuit input
@@ -140,8 +141,8 @@ async function generateProof({ deposit, recipient, contractAddress }) {
         root: root,
         nullifierHash: deposit.nullifierHash,
         recipient: bigInt(recipient),
-        relayer: bigInt(0),
-        fee: bigInt(0),
+        relayer: bigInt(relayerAddress || 0),
+        fee: bigInt(fee || 0),
         refund: bigInt(0),
         
         // Private inputs
@@ -151,7 +152,16 @@ async function generateProof({ deposit, recipient, contractAddress }) {
         pathIndices: pathIndices
     };
     
-    console.log('Generating SNARK proof...');
+    console.log('\n========== Generating SNARK proof ==========');
+    console.log('Contract:', contractAddress);
+    console.log('Recipient:', recipient);
+    if (relayerAddress) {
+        console.log('Relayer address:', relayerAddress);
+        console.log('Relayer fee (wei):', fee);
+        console.log('Relayer fee (PLS):', fee / 1e18);
+    }
+    console.log('Merkle root:', toHex(root));
+    console.log('Nullifier hash:', toHex(deposit.nullifierHash));
     console.time('Proof generation');
     
     const proofData = await websnarkUtils.genWitnessAndProve(groth16, input, circuit, proving_key);
@@ -319,12 +329,13 @@ app.post('/api/deposit/complete', async (req, res) => {
 });
 */
 
-// API endpoint for withdrawal with full ZK proof
+// API endpoint for withdrawal with full ZK proof (with relayer support)
 app.post('/api/withdraw', async (req, res) => {
     try {
-        const { note, recipient } = req.body;
+        const { note, recipient, relayerAddress, useRelayer } = req.body;
         console.log('Processing ZK withdrawal...');
         console.log('Note:', note ? note.substring(0, 50) + '...' : 'none');
+        console.log('Use relayer:', useRelayer);
         
         const { currency, amount, netId, deposit } = parseNote(note);
         
@@ -353,11 +364,32 @@ app.post('/api/withdraw', async (req, res) => {
             throw new Error('Deposit not found in contract. Make sure you used the correct note.');
         }
         
+        // Calculate fee if using relayer
+        let fee = 0;
+        let finalRelayerAddress = null;
+        
+        if (useRelayer && relayerAddress) {
+            finalRelayerAddress = relayerAddress;
+            // Normalize amount format for fee calculation
+            let normalizedAmount = amount;
+            if (amount === '1000000') normalizedAmount = '1M';
+            else if (amount === '10000000') normalizedAmount = '10M';
+            else if (amount === '100000000') normalizedAmount = '100M';
+            else if (amount === '1000000000') normalizedAmount = '1B';
+            
+            fee = calculateRelayerFee(normalizedAmount, 'standard');
+            console.log('Amount:', amount, '-> Normalized:', normalizedAmount);
+            console.log('Calculated relayer fee:', fee, 'PLS');
+            console.log('Relayer address:', finalRelayerAddress);
+        }
+        
         // Generate proof
         const { proof, args } = await generateProof({ 
             deposit, 
             recipient: recipient || '0x0000000000000000000000000000000000000000',
-            contractAddress
+            contractAddress,
+            relayerAddress: finalRelayerAddress,
+            fee: fee
         });
         
         console.log('✅ ZK proof generated successfully');
@@ -379,6 +411,25 @@ app.post('/api/withdraw', async (req, res) => {
     }
 });
 
+// API endpoint to get available relayers
+app.get('/api/relayers', (req, res) => {
+    const { denomination } = req.query;
+    const relayers = getActiveRelayers(denomination);
+    res.json(relayers);
+});
+
+// API endpoint to calculate relayer fee
+app.get('/api/relayer-fee', (req, res) => {
+    const { denomination, gasPrice = 'standard' } = req.query;
+    const fee = calculateRelayerFee(denomination, gasPrice);
+    res.json({ 
+        fee: fee.toString(),
+        denomination,
+        gasPrice,
+        feePercent: relayerConfig.feeStructure[denomination] || 0.5
+    });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
     res.json({ 
@@ -387,7 +438,8 @@ app.get('/api/health', (req, res) => {
         contracts: CONTRACTS,
         zkProofs: 'enabled',
         pedersen: 'enabled',
-        compatible: 'CLI and Web fully compatible'
+        compatible: 'CLI and Web fully compatible',
+        relayerSupport: 'enabled'
     });
 });
 
