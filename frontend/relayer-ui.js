@@ -29,18 +29,10 @@ async function initRelayerUI() {
             
             <div class="relayer-info" id="relayerInfo">
                 <div class="info-row">
-                    <span class="info-label">Fee:</span>
-                    <span class="info-value" id="relayerFee">-</span>
-                </div>
-                <div class="info-row">
                     <span class="info-label">Status:</span>
                     <span class="info-value" id="relayerStatus">-</span>
                 </div>
                 <input type="hidden" id="gasSpeed" value="fast" />
-                <div class="info-row">
-                    <span class="info-label">You will receive:</span>
-                    <span class="info-value highlight" id="netAmount">-</span>
-                </div>
             </div>
             
         </div>
@@ -164,22 +156,43 @@ function addRelayerStyles() {
             color: #ddd;
         }
 
-        .relayer-selection select,
-        #gasSpeed {
+        .relayer-selection select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff41;
             font-size: 14px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .relayer-selection select:hover {
+            border-color: #00ff41;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+        
+        .relayer-selection select:focus {
+            outline: none;
+            border-color: #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+        }
+        
+        .relayer-selection select option {
+            background: #000;
+            color: #00ff41;
+            padding: 10px;
         }
 
         .relayer-info {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px;
             border-radius: 8px;
             margin-bottom: 15px;
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            backdrop-filter: blur(10px);
         }
 
         .info-row {
@@ -191,8 +204,6 @@ function addRelayerStyles() {
 
         .info-row:last-child {
             margin-bottom: 0;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .info-label {
@@ -307,13 +318,8 @@ async function updateRelayerFee() {
         const feeInWei = BigInt(data.fee);
         const feeInPLS = Number(feeInWei / BigInt(10 ** 18));
         
-        const denominationValue = getDenominationValue(denomination);
-        const netAmount = denominationValue - feeInPLS;
-        
-        document.getElementById('relayerFee').textContent = 
-            `${formatPLS(feeInPLS)} PLS (${data.feePercent}%)`;
-        document.getElementById('netAmount').textContent = 
-            `${formatPLS(netAmount)} PLS`;
+        // Fee calculation still happens but not displayed
+        // This ensures the relayer gets proper fee when processing
     } catch (error) {
         console.error('Error calculating fee:', error);
     }
