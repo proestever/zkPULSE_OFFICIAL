@@ -246,6 +246,11 @@ function toggleRelayer() {
     } else {
         relayerOptions.style.display = 'none';
     }
+    
+    // Update UI to reflect relayer state (enables/disables wallet requirement)
+    if (typeof updateUI === 'function') {
+        updateUI();
+    }
 }
 
 // Load available relayers

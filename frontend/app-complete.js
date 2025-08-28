@@ -196,10 +196,20 @@ function updateUI() {
         depositBtn.textContent = 'Connect Wallet First';
     }
     
-    if (userAccount) {
+    // Check if relayer is enabled - if so, no wallet needed for withdrawal
+    const useRelayer = document.getElementById('useRelayer');
+    const isRelayerEnabled = useRelayer && useRelayer.checked;
+    
+    if (isRelayerEnabled) {
+        // Relayer mode - no wallet needed
+        withdrawBtn.disabled = false;
+        withdrawBtn.textContent = 'Withdraw (via Relayer)';
+    } else if (userAccount) {
+        // Direct withdrawal - wallet connected
         withdrawBtn.disabled = false;
         withdrawBtn.textContent = 'Withdraw';
     } else {
+        // Direct withdrawal - wallet not connected
         withdrawBtn.disabled = true;
         withdrawBtn.textContent = 'Connect Wallet First';
     }
