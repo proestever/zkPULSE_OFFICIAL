@@ -284,6 +284,12 @@
         
         .denomination-card.selected {
             border-color: #00ff41;
+            background: rgba(0, 255, 65, 0.1);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.4);
+        }
+        
+        .denomination-card.selected {
+            border-color: #00ff41;
             background: rgba(10, 10, 10, 0.6);
             box-shadow: 0 0 20px rgba(0, 255, 65, 0.4), inset 0 0 15px rgba(0, 255, 65, 0.05);
             border-width: 2px;
@@ -727,7 +733,7 @@
             </div>
         </div>
         
-        <div id="withdrawTab" class="hidden">
+        <div id="withdrawTab" class="hidden withdraw-section">
             <div class="input-group">
                 <label>Note from Deposit</label>
                 <input type="text" id="withdrawNote" placeholder="tornado-pls-1M-369-0x... or tornado-pcock-10k-369-0x..." />
@@ -737,6 +743,8 @@
                 <label>Recipient Address</label>
                 <input type="text" id="recipientAddress" placeholder="0x..." />
             </div>
+            
+            <!-- Relayer UI will be inserted here by relayer-ui.js -->
             
             <button class="button" onclick="withdraw()" id="withdrawBtn" disabled>
                 Connect Wallet First
@@ -958,7 +966,7 @@
                 card.classList.remove('selected');
                 // Check if this card matches the selected denomination
                 const cardText = card.querySelector('.denomination-amount');
-                if (cardText && cardText.textContent === denom) {
+                if (cardText && cardText.textContent.includes(denom + ' PLS')) {
                     card.classList.add('selected');
                 }
             });
@@ -968,9 +976,11 @@
             if (btn && userAccount) {
                 btn.textContent = `Deposit ${denom} PLS`;
                 btn.disabled = false;
+                btn.style.display = 'block'; // Make sure it's visible
             } else if (btn) {
                 btn.textContent = userAccount ? `Deposit ${denom} PLS` : 'Connect Wallet First';
                 btn.disabled = !userAccount;
+                btn.style.display = 'block'; // Make sure it's visible
             }
             
             // Call existing updateDepositButton if it exists
@@ -986,6 +996,8 @@
     <script src="deposit-recovery.js"></script>
     <script src="app-complete.js"></script>
     <script src="enhanced-stats.js"></script>
+    <script src="relayer-ui.js"></script>
+    <script src="relayer-withdrawal.js"></script>
     
     <!-- Matrix Background Animation Script -->
     <script>

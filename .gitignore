@@ -7,10 +7,14 @@ yarn.lock
 .env
 .env.local
 .env.production
+relayer/.env
+*.env
+!*.env.template
 
 # Deployment and test scripts (not needed in repo)
 *.js
 !frontend/*.js
+!relayer/*.js
 deploy-*.js
 test-*.js
 verify-*.js
