@@ -408,6 +408,8 @@ async function processWithdrawal(jobId, proof, args, contractAddress, denominati
 
     } catch (error) {
         console.error(`Withdrawal failed for job ${jobId}`);
+        console.error('Full error details:', error.message);
+        console.error('Error stack:', error.stack);
         
         // Security: Store sanitized error message
         let userFriendlyError = 'Transaction failed';
