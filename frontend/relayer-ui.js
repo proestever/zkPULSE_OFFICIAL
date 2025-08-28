@@ -27,13 +27,7 @@ async function initRelayerUI() {
                 </select>
             </div>
             
-            <div class="relayer-info" id="relayerInfo">
-                <div class="info-row">
-                    <span class="info-label">Status:</span>
-                    <span class="info-value" id="relayerStatus">-</span>
-                </div>
-                <input type="hidden" id="gasSpeed" value="fast" />
-            </div>
+            <input type="hidden" id="gasSpeed" value="fast" />
             
         </div>
     `;
@@ -159,6 +153,7 @@ function addRelayerStyles() {
         .relayer-selection select {
             width: 100%;
             padding: 12px;
+            padding-right: 35px;
             border-radius: 8px;
             border: 1px solid rgba(0, 255, 65, 0.3);
             background: rgba(0, 0, 0, 0.8);
@@ -167,6 +162,11 @@ function addRelayerStyles() {
             backdrop-filter: blur(10px);
             transition: all 0.3s;
             cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300ff41' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 20px;
         }
         
         .relayer-selection select:hover {
@@ -299,8 +299,6 @@ function updateRelayerInfo() {
     const relayer = window.availableRelayers[relayerIndex];
     
     if (relayer) {
-        document.getElementById('relayerStatus').textContent = 
-            relayer.status === 'active' ? '🟢 Active' : '🔴 Offline';
         updateRelayerFee();
     }
 }
