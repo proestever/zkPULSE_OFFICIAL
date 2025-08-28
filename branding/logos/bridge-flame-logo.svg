@@ -1,0 +1,20 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="flameGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#ff6400"/>
+<stop offset="25%" stop-color="#ff8c00"/>
+<stop offset="50%" stop-color="#ffb300"/>
+<stop offset="75%" stop-color="#ffd300"/>
+<stop offset="100%" stop-color="#ffed54"/>
+</linearGradient>
+<linearGradient id="ribbonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#933c94"/>
+<stop offset="33%" stop-color="#c03885"/>
+<stop offset="66%" stop-color="#db4573"/>
+<stop offset="100%" stop-color="#ee6060"/>
+</linearGradient>
+</defs>
+<path d="M24 6C24 6 30 8 34 12C38 16 40 22 38 26C36 30 32 32 28 32C24 32 20 30 20 26C20 22 22 18 24 16C26 14 28 12 28 10C28 10 26 8 24 6Z" fill="url(#flameGradient)"/>
+<path d="M28 20C28 20 24 18 19 20C14 19 10 21 11 25C12 29 16 31 20 32C24 33 28 31 29 27C30 23 28 20 28 20Z" fill="url(#ribbonGradient)"/>
+<path d="M19 32C19 32 16 34 16 37C16 40 17 42 18 42C19 42 20 40 21 37C22 34 23 32 24 32C24 32 22 30 19 32Z" fill="url(#ribbonGradient)"/>
+</svg>
