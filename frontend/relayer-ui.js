@@ -17,7 +17,6 @@ async function initRelayerUI() {
                 <span class="slider round"></span>
             </label>
             <span class="relayer-label">Use Relayer (Privacy Enhanced)</span>
-            <span class="info-icon" title="Relayers submit your withdrawal transaction for you, protecting your IP address and ensuring the recipient address has no direct connection to your wallet">ℹ️</span>
         </div>
         
         <div id="relayerOptions" class="relayer-options" style="display: none;">
@@ -37,24 +36,13 @@ async function initRelayerUI() {
                     <span class="info-label">Status:</span>
                     <span class="info-value" id="relayerStatus">-</span>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">Gas Speed:</span>
-                    <select id="gasSpeed" onchange="updateRelayerFee()">
-                        <option value="slow">Slow (0.8x)</option>
-                        <option value="standard" selected>Standard (1x)</option>
-                        <option value="fast">Fast (1.3x)</option>
-                        <option value="instant">Instant (2x)</option>
-                    </select>
-                </div>
+                <input type="hidden" id="gasSpeed" value="fast" />
                 <div class="info-row">
                     <span class="info-label">You will receive:</span>
                     <span class="info-value highlight" id="netAmount">-</span>
                 </div>
             </div>
             
-            <div class="relayer-warning">
-                ⚠️ Note: Using a relayer incurs a small fee but significantly enhances privacy
-            </div>
         </div>
     `;
 
@@ -93,8 +81,8 @@ function addRelayerStyles() {
         .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 24px;
+            width: 60px;
+            height: 30px;
         }
 
         .switch input {
@@ -110,12 +98,14 @@ function addRelayerStyles() {
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background-color: #1a1a1a;
+            border: 2px solid #00ff41;
             transition: .4s;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
         }
 
         .slider.round {
-            border-radius: 24px;
+            border-radius: 30px;
         }
 
         .slider.round:before {
@@ -125,20 +115,23 @@ function addRelayerStyles() {
         .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
+            height: 22px;
+            width: 22px;
+            left: 2px;
+            bottom: 2px;
+            background-color: #00ff41;
             transition: .4s;
+            box-shadow: 0 0 15px #00ff41;
         }
 
         input:checked + .slider {
-            background-color: #4CAF50;
+            background-color: #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.8);
         }
 
         input:checked + .slider:before {
-            transform: translateX(26px);
+            transform: translateX(30px);
+            background-color: #001a00;
         }
 
         .relayer-label {
@@ -265,7 +258,7 @@ async function loadRelayers() {
         relayers.forEach((relayer, index) => {
             const option = document.createElement('option');
             option.value = index; // Use index as value
-            option.textContent = `${relayer.name} (${relayer.fee}% fee, ${relayer.rating}★)`;
+            option.textContent = `${relayer.name} (${relayer.fee}% fee)`;
             option.dataset.relayerIndex = index;
             option.dataset.relayerAddress = relayer.address;
             select.appendChild(option);
@@ -305,7 +298,7 @@ function updateRelayerInfo() {
 async function updateRelayerFee() {
     try {
         const denomination = getCurrentDenomination();
-        const gasSpeed = document.getElementById('gasSpeed').value;
+        const gasSpeed = 'fast'; // Always use 1.5x gas
         
         const response = await fetch(`/api/relayer-fee?denomination=${denomination}&gasSpeed=${gasSpeed}`);
         const data = await response.json();
@@ -382,7 +375,7 @@ function getSelectedRelayer() {
         address: relayer.address,
         url: relayer.url,
         fee: relayer.fee,
-        gasSpeed: document.getElementById('gasSpeed').value
+        gasSpeed: 'fast' // Always use 1.5x gas
     };
 }
 
