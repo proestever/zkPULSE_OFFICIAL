@@ -1300,24 +1300,27 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         
-        // Sample depositor addresses
-        const addresses = [
-            '0x742d...8dC4',
-            '0xA1b2...3cD4',
-            '0x9876...5432',
-            '0xDef1...2345',
-            '0x1234...5678',
-            '0xCafe...Babe',
-            '0xDead...Beef',
-            '0x8765...4321',
-            '0xFeed...Face',
-            '0xBaad...F00d',
-            '0x1337...1337',
-            '0xC0de...Cafe',
-            '0x5aFe...9b8c',
-            '0x7890...abcd',
-            '0xBc4e...def0'
-        ];
+        // Generate realistic random addresses
+        function generateRandomAddress() {
+            const hex = '0123456789abcdef';
+            let addr = '0x';
+            // First 4 chars
+            for (let i = 0; i < 4; i++) {
+                addr += hex[Math.floor(Math.random() * hex.length)];
+            }
+            addr += '...';
+            // Last 4 chars
+            for (let i = 0; i < 4; i++) {
+                addr += hex[Math.floor(Math.random() * hex.length)];
+            }
+            return addr;
+        }
+        
+        // Generate array of realistic addresses
+        const addresses = [];
+        for (let i = 0; i < 15; i++) {
+            addresses.push(generateRandomAddress());
+        }
         
         // Node class for floating addresses
         class Node {
