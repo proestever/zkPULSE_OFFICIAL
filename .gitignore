@@ -15,6 +15,7 @@ relayer/.env
 *.js
 !frontend/*.js
 !relayer/*.js
+!start-all.js
 deploy-*.js
 test-*.js
 verify-*.js
