@@ -16,8 +16,25 @@ const app = express();
 
 // Security: Use helmet for security headers
 app.use(helmet({
-    contentSecurityPolicy: false, // We'll handle CSP separately for API
-    crossOriginEmbedderPolicy: false
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts for API responses
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'"],
+            fontSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            mediaSrc: ["'self'"],
+            frameSrc: ["'none'"]
+        }
+    },
+    crossOriginEmbedderPolicy: false,
+    hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+    }
 }));
 
 // Security: Configure CORS properly
@@ -27,8 +44,14 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS ?
 
 app.use(cors({
     origin: function(origin, callback) {
-        // Allow requests with no origin (like mobile apps or Postman)
-        if (!origin) return callback(null, true);
+        // SECURITY FIX: Reject requests with no origin in production
+        if (!origin) {
+            // Only allow no-origin in development
+            if (process.env.NODE_ENV === 'development') {
+                return callback(null, true);
+            }
+            return callback(new Error('Origin required'));
+        }
         
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
@@ -183,8 +206,27 @@ function isValidEthereumAddress(address) {
     return /^0x[a-fA-F0-9]{40}$/.test(address);
 }
 
-function isValidHex(hex) {
-    return /^0x[a-fA-F0-9]+$/.test(hex);
+function isValidHex(hex, expectedLength = null) {
+    // Check basic hex format
+    if (!/^0x[a-fA-F0-9]+$/.test(hex)) {
+        return false;
+    }
+    
+    // Check length if specified (in bytes)
+    if (expectedLength !== null) {
+        const actualLength = (hex.length - 2) / 2; // Remove '0x' and divide by 2 for bytes
+        if (actualLength !== expectedLength) {
+            return false;
+        }
+    }
+    
+    // Prevent oversized hex strings (DoS protection)
+    const MAX_HEX_LENGTH = 2048; // Max 1024 bytes
+    if (hex.length > MAX_HEX_LENGTH) {
+        return false;
+    }
+    
+    return true;
 }
 
 // API Routes
