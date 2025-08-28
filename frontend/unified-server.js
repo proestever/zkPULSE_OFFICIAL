@@ -161,7 +161,7 @@ async function generateProof({ deposit, recipient, contractAddress, relayerAddre
         console.log('Relayer fee (PLS):', fee / 1e18);
     }
     console.log('Merkle root:', toHex(root));
-    console.log('Nullifier hash:', toHex(deposit.nullifierHash));
+    // Sensitive data - not logged for privacy
     console.time('Proof generation');
     
     const proofData = await websnarkUtils.genWitnessAndProve(groth16, input, circuit, proving_key);
@@ -181,40 +181,10 @@ async function generateProof({ deposit, recipient, contractAddress, relayerAddre
     return { proof, args };
 }
 
-// Storage directory for wallet deposits
-const DEPOSITS_DIR = path.join(__dirname, 'wallet-deposits');
-
-// Ensure deposits directory exists
-async function ensureDepositsDir() {
-    try {
-        await fsPromises.access(DEPOSITS_DIR);
-    } catch {
-        await fsPromises.mkdir(DEPOSITS_DIR, { recursive: true });
-    }
-}
-
-// Save deposit for wallet
-async function saveDepositForWallet(walletAddress, depositData) {
-    await ensureDepositsDir();
-    const walletFile = path.join(DEPOSITS_DIR, `${walletAddress.toLowerCase()}.json`);
-    
-    let walletDeposits = [];
-    try {
-        const existing = await fsPromises.readFile(walletFile, 'utf8');
-        walletDeposits = JSON.parse(existing);
-    } catch {
-        // File doesn't exist yet
-    }
-    
-    walletDeposits.push({
-        ...depositData,
-        timestamp: new Date().toISOString(),
-        status: 'pending'
-    });
-    
-    await fsPromises.writeFile(walletFile, JSON.stringify(walletDeposits, null, 2));
-    return depositData;
-}
+// PRIVACY PROTECTION: All deposit storage functions have been removed.
+// NO SERVER-SIDE STORAGE of sensitive deposit data.
+// All deposit tracking is handled client-side only to ensure complete privacy.
+// This is critical for maintaining the privacy guarantees of the mixer.
 
 // API endpoint for deposit (NO wallet tracking for privacy)
 app.post('/api/deposit', async (req, res) => {
@@ -242,8 +212,7 @@ app.post('/api/deposit', async (req, res) => {
         
         const noteString = `tornado-pls-${amount}-369-${note}`;
         
-        console.log('Generated commitment:', deposit.commitmentHex);
-        console.log('Note:', noteString.substring(0, 50) + '...');
+        // Privacy protection: Not logging sensitive commitment or note data
         
         // Prepare response data
         const responseData = {
@@ -334,7 +303,7 @@ app.post('/api/withdraw', async (req, res) => {
     try {
         const { note, recipient, relayerAddress, useRelayer } = req.body;
         console.log('Processing ZK withdrawal...');
-        console.log('Note:', note ? note.substring(0, 50) + '...' : 'none');
+        // Privacy protection: Not logging note data
         console.log('Use relayer:', useRelayer);
         
         const { currency, amount, netId, deposit } = parseNote(note);
@@ -353,7 +322,7 @@ app.post('/api/withdraw', async (req, res) => {
         else throw new Error(`Invalid amount: ${amount}`);
         
         console.log('Using contract:', contractAddress);
-        console.log('Commitment:', deposit.commitmentHex);
+        // Privacy protection: Not logging commitment data
         
         // Check if deposit exists
         const contractJson = require('../build/contracts/ETHTornado.json');
