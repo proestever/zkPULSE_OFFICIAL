@@ -132,9 +132,9 @@ async function updateWalletButton() {
                 maximumFractionDigits: 4 
             });
             
-            // Add balance below address
+            // Add balance below address with green dot
             buttonText.innerHTML = `
-                <div>${userAccount.substring(0, 6)}...${userAccount.substring(38)}</div>
+                <div><span style="display: inline-block; width: 8px; height: 8px; background: #00ff41; border-radius: 50%; margin-right: 8px; box-shadow: 0 0 10px #00ff41; animation: pulse 2s infinite;"></span>${userAccount.substring(0, 6)}...${userAccount.substring(38)}</div>
                 <div style="font-size: 11px; color: #00ff41; margin-top: 2px;">${formattedBalance} PLS</div>
             `;
         } catch (error) {
