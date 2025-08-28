@@ -12,7 +12,10 @@
     "cors": "^2.8.5",
     "web3": "^4.14.0",
     "dotenv": "^16.0.3",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "express-validator": "^7.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
