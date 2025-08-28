@@ -5,7 +5,7 @@ const relayerConfig = {
         {
             name: "zkPULSE Relayer",
             address: "0x968DD9f833C58C0ADa629eF8f60180C7fEeF78d3", // Your relayer address
-            url: "http://localhost:4000", // Local relayer for testing
+            url: "https://development-zkpulse-1.onrender.com", // Production relayer
             fee: 0.5, // Fee percentage (0.5%)
             status: "active",
             gasPrice: "standard",
