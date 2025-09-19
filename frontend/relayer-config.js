@@ -1,13 +1,25 @@
 // Relayer Configuration and Management
 
+// Determine relayer URL based on environment
+function getRelayerUrl() {
+    // In production (Render), the relayer runs on the same server on port 4000
+    // but must be accessed via proxy through the main server
+    if (process.env.NODE_ENV === 'production') {
+        // For production, we'll proxy to the internal relayer
+        return '/relayer'; // This will be proxied by the main server
+    }
+    // For local development
+    return 'http://localhost:4000';
+}
+
 // Always use local relayer when available
 const relayerConfig = {
     // Default relayer registry (can be updated with your own relayers)
     relayers: [
         {
-            name: "Local Development Relayer",
+            name: process.env.NODE_ENV === 'production' ? "zkPULSE Official Relayer" : "Local Development Relayer",
             address: "0x968DD9f833C58C0ADa629eF8f60180C7fEeF78d3", // Your relayer address
-            url: "http://localhost:4000", // Local relayer
+            url: getRelayerUrl(), // Dynamically determined
             fee: 0.5, // Fee percentage (0.5%)
             status: "active",
             gasPrice: "standard",
@@ -17,7 +29,7 @@ const relayerConfig = {
             isLocal: true
         },
         {
-            name: "zkPULSE Public Relayer",
+            name: "zkPULSE Public Relayer (Backup)",
             address: "0x968DD9f833C58C0ADa629eF8f60180C7fEeF78d3", // Your relayer address
             url: "https://development-zkpulse-1.onrender.com", // Production relayer
             fee: 0.5, // Fee percentage (0.5%)

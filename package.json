@@ -30,6 +30,7 @@
     "ffjavascript": "^0.3.1",
     "fixed-merkle-tree": "^0.6.1",
     "helmet": "^8.1.0",
+    "http-proxy-middleware": "^2.0.6",
     "snarkjs": "github:tornadocash/snarkjs#869181cfaf7526fe8972073d31655493a04326d5",
     "solc": "^0.7.6",
     "uuid": "^9.0.0",

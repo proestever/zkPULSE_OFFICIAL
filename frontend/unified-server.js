@@ -20,6 +20,25 @@ const PORT = process.env.PORT || 8888;
 
 // Middleware
 app.use(express.json());
+
+// Proxy relayer requests in production
+if (process.env.NODE_ENV === 'production') {
+    const { createProxyMiddleware } = require('http-proxy-middleware');
+
+    // Proxy /relayer requests to internal relayer service on port 4000
+    app.use('/relayer', createProxyMiddleware({
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+        pathRewrite: {
+            '^/relayer': '' // Remove /relayer prefix when forwarding
+        },
+        onError: (err, req, res) => {
+            console.error('Relayer proxy error:', err);
+            res.status(500).json({ error: 'Relayer service unavailable' });
+        }
+    }));
+}
+
 app.use(express.static(__dirname));
 app.use('/build', express.static(path.join(__dirname, '..', 'build')));
 app.use('/branding', express.static(path.join(__dirname, '..', 'branding')));
