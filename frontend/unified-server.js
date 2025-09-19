@@ -11,6 +11,9 @@ const { Web3 } = require('web3');
 const buildGroth16 = require('websnark/src/groth16');
 const websnarkUtils = require('websnark/src/utils');
 const { relayerConfig, calculateRelayerFee, getActiveRelayers } = require('./relayer-config');
+const { getWeb3Instance } = require('./rpc-config');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8888;
@@ -21,8 +24,8 @@ app.use(express.static(__dirname));
 app.use('/build', express.static(path.join(__dirname, '..', 'build')));
 app.use('/branding', express.static(path.join(__dirname, '..', 'branding')));
 
-// Web3 setup - Using WebSocket for faster event fetching
-const web3 = new Web3(new Web3.providers.WebsocketProvider('wss://rpc-pulsechain.g4mm4.io'));
+// Web3 setup - Will be initialized with working RPC
+let web3;
 
 // All deployed contracts
 const CONTRACTS = {
@@ -92,22 +95,84 @@ function parseNote(noteString) {
 }
 
 /**
+ * Helper function to fetch events in smaller chunks if needed
+ */
+async function fetchInSmallChunks(tornado, fromBlock, toBlock, chunkSize) {
+    const events = [];
+    for (let start = fromBlock; start <= toBlock; start += chunkSize) {
+        const end = Math.min(start + chunkSize - 1, toBlock);
+        const chunkEvents = await tornado.getPastEvents('Deposit', {
+            fromBlock: start,
+            toBlock: end
+        });
+        events.push(...chunkEvents);
+    }
+    return events;
+}
+
+/**
  * Generate merkle proof for withdrawal
  */
 async function generateMerkleProof(deposit, contractAddress) {
     const contractJson = require('../build/contracts/ETHTornado.json');
     const tornado = new web3.eth.Contract(contractJson.abi, contractAddress);
-    
-    console.log('Fetching deposit events via WebSocket...');
+
+    console.log('Fetching deposit events...');
     const startTime = Date.now();
-    
-    // Get all deposit events - WebSocket is much faster for this
-    const events = await tornado.getPastEvents('Deposit', { 
-        fromBlock: 0, 
-        toBlock: 'latest' 
-    });
-    
-    console.log(`Fetched ${events.length} events in ${Date.now() - startTime}ms`);
+
+    // Fetch events in chunks to avoid timeout
+    const events = [];
+    const currentBlockBigInt = await web3.eth.getBlockNumber();
+    const currentBlock = Number(currentBlockBigInt); // Convert BigInt to Number
+
+    // Optimized fetching strategy based on contract activity
+    const DEPLOYMENT_BLOCK = 24200000;
+    const blockSize = 500000; // Larger chunks = fewer RPC calls
+
+    // Parallel fetch strategy for known active ranges
+    const activeRanges = [
+        { from: 24200000, to: 24299999 },  // Main activity range
+        { from: 24300000, to: 24399999 },  // Secondary activity
+        { from: 24400000, to: currentBlock } // Recent activity
+    ];
+
+    try {
+        console.log('Fast-fetching events from known active ranges...');
+
+        // Fetch all ranges in parallel for speed
+        const promises = activeRanges.map(range => {
+            const fromBlock = Math.max(range.from, DEPLOYMENT_BLOCK);
+            const toBlock = Math.min(range.to, currentBlock);
+
+            if (fromBlock <= toBlock) {
+                console.log(`Fetching block range ${fromBlock}-${toBlock}...`);
+                return tornado.getPastEvents('Deposit', {
+                    fromBlock: fromBlock,
+                    toBlock: toBlock
+                }).catch(err => {
+                    console.error(`Error fetching ${fromBlock}-${toBlock}, retrying in chunks...`);
+                    // Fallback to smaller chunks if range is too large
+                    return fetchInSmallChunks(tornado, fromBlock, toBlock, 100000);
+                });
+            }
+            return Promise.resolve([]);
+        });
+
+        // Wait for all parallel fetches
+        const results = await Promise.all(promises);
+
+        // Combine and sort events
+        for (const chunkEvents of results) {
+            events.push(...chunkEvents);
+        }
+
+        console.log(`Fetched ${events.length} events in parallel`);
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        throw new Error('Failed to fetch deposit events. Try again.');
+    }
+
+    console.log(`Fetched ${events.length} total events in ${Date.now() - startTime}ms`);
     
     const leaves = events
         .sort((a, b) => Number(a.returnValues.leafIndex) - Number(b.returnValues.leafIndex))
@@ -417,22 +482,49 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// WebSocket reconnection handling
-web3.currentProvider.on('connect', () => {
-    console.log('✅ WebSocket connected to PulseChain');
-});
+// Setup Web3 connection monitoring
+function setupWeb3Monitoring() {
+    // Only set up event listeners for WebSocket providers
+    if (web3.currentProvider && web3.currentProvider.on && typeof web3.currentProvider.on === 'function') {
+        try {
+            web3.currentProvider.on('connect', () => {
+                console.log('✅ Connected to PulseChain RPC');
+            });
 
-web3.currentProvider.on('error', (error) => {
-    console.error('WebSocket error:', error);
-});
+            web3.currentProvider.on('error', (error) => {
+                console.error('RPC error:', error.message);
+            });
 
-web3.currentProvider.on('end', () => {
-    console.log('WebSocket disconnected, attempting to reconnect...');
-    // Provider will auto-reconnect
-});
+            web3.currentProvider.on('end', () => {
+                console.log('RPC disconnected, attempting to reconnect...');
+                // Provider will auto-reconnect if WebSocket
+            });
+        } catch (e) {
+            // HTTP providers don't support event listeners, which is fine
+            console.log('Using HTTP provider (no event monitoring)');
+        }
+    } else {
+        console.log('Using HTTP provider (no event monitoring)');
+    }
+}
 
 // Initialize and start
 async function start() {
+    try {
+        // Initialize Web3 with working RPC
+        console.log('🔍 Finding working PulseChain RPC endpoint...');
+        web3 = await getWeb3Instance(false); // Prefer HTTP for better reliability
+        setupWeb3Monitoring();
+
+        // Test connection
+        const blockNumber = await web3.eth.getBlockNumber();
+        const chainId = await web3.eth.getChainId();
+        console.log(`✅ Connected to PulseChain (Chain ID: ${chainId}, Block: ${blockNumber})`);
+    } catch (error) {
+        console.error('Failed to connect to PulseChain:', error);
+        process.exit(1);
+    }
+
     await initCircuits();
     
     app.listen(PORT, () => {
