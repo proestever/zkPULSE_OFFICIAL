@@ -283,16 +283,41 @@ async function processWithdrawal(jobId, proof, args, contractAddress, denominati
             });
             console.log('Gas estimate:', gasEstimate);
         } catch (estimateError) {
-            console.error('\nGas estimation failed!');
-            console.error('Error message:', estimateError.message);
-            if (estimateError.message.includes('execution reverted')) {
-                console.error('Contract execution would revert. Likely causes:');
-                console.error('  1. Invalid proof');
-                console.error('  2. Nullifier already spent');
-                console.error('  3. Invalid merkle root');
-                console.error('  4. Fee/relayer address mismatch with proof');
+            console.error('\n❌ Gas estimation failed!');
+            console.error('Error details:', estimateError);
+
+            // Try to decode the revert reason
+            if (estimateError.data) {
+                console.error('Revert data:', estimateError.data);
             }
-            throw new Error(`Gas estimation failed: ${estimateError.message}`);
+
+            if (estimateError.message) {
+                console.error('Error message:', estimateError.message);
+
+                if (estimateError.message.includes('already been spent')) {
+                    console.error('⚠️  This note has already been withdrawn!');
+                    throw new Error('Note already spent');
+                } else if (estimateError.message.includes('cannot be found')) {
+                    console.error('⚠️  Merkle root not found - deposit may not exist');
+                    throw new Error('Invalid merkle root - deposit not found');
+                } else if (estimateError.message.includes('Invalid withdraw proof')) {
+                    console.error('⚠️  Proof verification failed');
+                    throw new Error('Invalid proof');
+                } else if (estimateError.message.includes('execution reverted')) {
+                    console.error('⚠️  Contract execution would revert. Common causes:');
+                    console.error('  1. Invalid proof parameters');
+                    console.error('  2. Nullifier already spent (note already withdrawn)');
+                    console.error('  3. Invalid merkle root (deposit not found)');
+                    console.error('  4. Fee/relayer address mismatch with proof');
+                    console.error('\nDebug info:');
+                    console.error('  Contract:', contractAddress);
+                    console.error('  Relayer:', config.relayerAddress);
+                    console.error('  Fee from proof:', fee);
+                    throw new Error('Transaction would revert - check note validity');
+                }
+            }
+
+            throw new Error(`Gas estimation failed: ${estimateError.message || 'Unknown error'}`);
         }
 
         // Send transaction
