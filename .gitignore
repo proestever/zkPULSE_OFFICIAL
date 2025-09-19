@@ -26,6 +26,6 @@ test-*.js
 *.pem
 private/
 
-# Cache directory
-cache/
+# Cache directory - We now INCLUDE cache files for production
+# cache/
 *.cache
