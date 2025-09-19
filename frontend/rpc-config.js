@@ -1,19 +1,19 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-// PulseChain RPC endpoints - Using your public RPC
+// PulseChain RPC endpoints - Using working public RPCs
 const RPC_ENDPOINTS = {
     primary: [
-        'https://rpc.gigatheminter.com',     // Your public RPC (primary)
-        'https://rpc.pulsechain.com',        // Public fallback
+        'https://rpc.pulsechain.com',        // Primary public RPC
         'https://pulsechain-rpc.publicnode.com',
-        'https://rpc-pulsechain.g4mm4.io'
+        'https://rpc-pulsechain.g4mm4.io',
+        'https://rpc.gigatheminter.com'      // Your RPC as fallback
     ],
     websocket: [
-        'wss://rpc.gigatheminter.com/ws',    // Your public WebSocket (primary)
-        'wss://ws.pulsechain.com',           // Public fallback
+        'wss://ws.pulsechain.com',           // Primary WebSocket
         'wss://pulsechain-rpc.publicnode.com',
-        'wss://rpc-pulsechain.g4mm4.io'
+        'wss://rpc-pulsechain.g4mm4.io',
+        'wss://rpc.gigatheminter.com/ws'     // Your WebSocket as fallback
     ]
 };
 
