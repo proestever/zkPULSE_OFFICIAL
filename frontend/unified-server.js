@@ -12,6 +12,7 @@ const buildGroth16 = require('websnark/src/groth16');
 const websnarkUtils = require('websnark/src/utils');
 const { relayerConfig, calculateRelayerFee, getActiveRelayers } = require('./relayer-config');
 const { getWeb3Instance } = require('./rpc-config');
+const eventCache = require('./event-cache');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -118,13 +119,25 @@ function parseNote(noteString) {
  */
 async function fetchInSmallChunks(tornado, fromBlock, toBlock, chunkSize) {
     const events = [];
-    for (let start = fromBlock; start <= toBlock; start += chunkSize) {
-        const end = Math.min(start + chunkSize - 1, toBlock);
-        const chunkEvents = await tornado.getPastEvents('Deposit', {
-            fromBlock: start,
-            toBlock: end
-        });
-        events.push(...chunkEvents);
+    // Use smaller chunks for production/public RPCs to avoid rate limits
+    const actualChunkSize = process.env.NODE_ENV === 'production' ? 25000 : chunkSize;
+
+    for (let start = fromBlock; start <= toBlock; start += actualChunkSize) {
+        const end = Math.min(start + actualChunkSize - 1, toBlock);
+        try {
+            const chunkEvents = await tornado.getPastEvents('Deposit', {
+                fromBlock: start,
+                toBlock: end
+            });
+            events.push(...chunkEvents);
+
+            // Add small delay in production to avoid rate limits
+            if (process.env.NODE_ENV === 'production') {
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+        } catch (err) {
+            console.error(`Failed to fetch ${start}-${end}, skipping...`);
+        }
     }
     return events;
 }
@@ -139,59 +152,76 @@ async function generateMerkleProof(deposit, contractAddress) {
     console.log('Fetching deposit events...');
     const startTime = Date.now();
 
-    // Fetch events in chunks to avoid timeout
-    const events = [];
+    // Use cached events for MUCH faster loading
     const currentBlockBigInt = await web3.eth.getBlockNumber();
-    const currentBlock = Number(currentBlockBigInt); // Convert BigInt to Number
+    const currentBlock = Number(currentBlockBigInt);
 
-    // Optimized fetching strategy based on contract activity
-    const DEPLOYMENT_BLOCK = 24200000;
-    const blockSize = 500000; // Larger chunks = fewer RPC calls
-
-    // Parallel fetch strategy for known active ranges
-    const activeRanges = [
-        { from: 24200000, to: 24299999 },  // Main activity range
-        { from: 24300000, to: 24399999 },  // Secondary activity
-        { from: 24400000, to: currentBlock } // Recent activity
-    ];
+    let events;
 
     try {
-        console.log('Fast-fetching events from known active ranges...');
+        // Try to use cache first (will be instant after first load)
+        events = await eventCache.getCachedEvents(contractAddress, tornado, currentBlock);
+        console.log(`Loaded ${events.length} events from cache in ${Date.now() - startTime}ms`);
+    } catch (cacheError) {
+        console.log('Cache miss, fetching events directly...');
 
-        // Fetch all ranges in parallel for speed
-        const promises = activeRanges.map(range => {
-            const fromBlock = Math.max(range.from, DEPLOYMENT_BLOCK);
-            const toBlock = Math.min(range.to, currentBlock);
+        // Fallback to direct fetching if cache fails
+        events = [];
+        const DEPLOYMENT_BLOCK = 24200000;
 
-            if (fromBlock <= toBlock) {
-                console.log(`Fetching block range ${fromBlock}-${toBlock}...`);
-                return tornado.getPastEvents('Deposit', {
-                    fromBlock: fromBlock,
-                    toBlock: toBlock
-                }).catch(err => {
-                    console.error(`Error fetching ${fromBlock}-${toBlock}, retrying in chunks...`);
-                    // Fallback to smaller chunks if range is too large
-                    return fetchInSmallChunks(tornado, fromBlock, toBlock, 100000);
-                });
+        // Parallel fetch strategy for known active ranges
+        const activeRanges = [
+            { from: 24200000, to: 24299999 },  // Main activity range
+            { from: 24300000, to: 24399999 },  // Secondary activity
+            { from: 24400000, to: currentBlock } // Recent activity
+        ];
+
+        try {
+            console.log('Fast-fetching events from known active ranges...');
+
+            // Fetch all ranges in parallel for speed
+            const promises = activeRanges.map(range => {
+                const fromBlock = Math.max(range.from, DEPLOYMENT_BLOCK);
+                const toBlock = Math.min(range.to, currentBlock);
+
+                if (fromBlock <= toBlock) {
+                    console.log(`Fetching block range ${fromBlock}-${toBlock}...`);
+                    return tornado.getPastEvents('Deposit', {
+                        fromBlock: fromBlock,
+                        toBlock: toBlock
+                    }).catch(err => {
+                        console.error(`Error fetching ${fromBlock}-${toBlock}, retrying in chunks...`);
+                        // Fallback to smaller chunks if range is too large
+                        const fallbackChunkSize = process.env.NODE_ENV === 'production' ? 25000 : 100000;
+                        return fetchInSmallChunks(tornado, fromBlock, toBlock, fallbackChunkSize);
+                    });
+                }
+                return Promise.resolve([]);
+            });
+
+            // Wait for all parallel fetches
+            const results = await Promise.all(promises);
+
+            // Combine and sort events
+            for (const chunkEvents of results) {
+                events.push(...chunkEvents);
             }
-            return Promise.resolve([]);
-        });
 
-        // Wait for all parallel fetches
-        const results = await Promise.all(promises);
+            console.log(`Fetched ${events.length} events in parallel`);
 
-        // Combine and sort events
-        for (const chunkEvents of results) {
-            events.push(...chunkEvents);
+            // Save to cache for next time
+            try {
+                eventCache.saveCache(contractAddress, events, currentBlock);
+            } catch (e) {
+                console.error('Failed to save cache:', e);
+            }
+        } catch (error) {
+            console.error('Error fetching events:', error);
+            throw new Error('Failed to fetch deposit events. Try again.');
         }
-
-        console.log(`Fetched ${events.length} events in parallel`);
-    } catch (error) {
-        console.error('Error fetching events:', error);
-        throw new Error('Failed to fetch deposit events. Try again.');
     }
 
-    console.log(`Fetched ${events.length} total events in ${Date.now() - startTime}ms`);
+    console.log(`Total ${events.length} events ready in ${Date.now() - startTime}ms`);
     
     const leaves = events
         .sort((a, b) => Number(a.returnValues.leafIndex) - Number(b.returnValues.leafIndex))
@@ -384,6 +414,12 @@ app.post('/api/deposit/complete', async (req, res) => {
 
 // API endpoint for withdrawal with full ZK proof (with relayer support)
 app.post('/api/withdraw', async (req, res) => {
+    // Set timeout for production to prevent hanging
+    if (process.env.NODE_ENV === 'production') {
+        req.setTimeout(120000); // 2 minute timeout
+        res.setTimeout(120000);
+    }
+
     try {
         const { note, recipient, relayerAddress, useRelayer } = req.body;
         console.log('Processing ZK withdrawal...');
