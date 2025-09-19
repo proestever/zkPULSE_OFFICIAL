@@ -484,13 +484,26 @@ app.post('/api/withdraw', async (req, res) => {
         console.log('✅ ZK proof generated successfully');
 
         try {
+            // Debug deposit object safely
+            try {
+                console.log('Deposit type:', typeof deposit);
+                console.log('Deposit is null:', deposit === null);
+                console.log('Deposit is undefined:', deposit === undefined);
+                if (deposit) {
+                    console.log('Has commitmentHex:', 'commitmentHex' in deposit);
+                    console.log('Has nullifierHex:', 'nullifierHex' in deposit);
+                }
+            } catch (debugErr) {
+                console.error('Error debugging deposit:', debugErr.message);
+            }
+
             // Return proof data for frontend to execute
             const responseData = {
                 proof,
                 args,
                 contractAddress,
-                commitment: deposit.commitmentHex,
-                nullifierHash: deposit.nullifierHex,
+                commitment: deposit.commitmentHex || 'not-available',
+                nullifierHash: deposit.nullifierHex || 'not-available',
                 success: true,
                 message: 'ZK proof generated. Ready to withdraw.'
             };
