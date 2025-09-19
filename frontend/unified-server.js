@@ -414,10 +414,10 @@ app.post('/api/deposit/complete', async (req, res) => {
 
 // API endpoint for withdrawal with full ZK proof (with relayer support)
 app.post('/api/withdraw', async (req, res) => {
-    // Set timeout for production to prevent hanging
+    // Set longer timeout for production to account for proof generation
     if (process.env.NODE_ENV === 'production') {
-        req.setTimeout(120000); // 2 minute timeout
-        res.setTimeout(120000);
+        req.setTimeout(300000); // 5 minute timeout
+        res.setTimeout(300000);
     }
 
     try {
@@ -482,17 +482,30 @@ app.post('/api/withdraw', async (req, res) => {
         });
         
         console.log('✅ ZK proof generated successfully');
-        
-        // Return proof data for frontend to execute
-        res.json({
-            proof,
-            args,
-            contractAddress,
-            commitment: deposit.commitmentHex,
-            nullifierHash: deposit.nullifierHex,
-            success: true,
-            message: 'ZK proof generated. Ready to withdraw.'
-        });
+
+        try {
+            // Return proof data for frontend to execute
+            const responseData = {
+                proof,
+                args,
+                contractAddress,
+                commitment: deposit.commitmentHex,
+                nullifierHash: deposit.nullifierHex,
+                success: true,
+                message: 'ZK proof generated. Ready to withdraw.'
+            };
+
+            console.log('Building response data...');
+            console.log('Response data size:', JSON.stringify(responseData).length, 'bytes');
+            console.log('Sending proof response to frontend...');
+
+            res.json(responseData);
+
+            console.log('Response sent successfully');
+        } catch (respError) {
+            console.error('Error sending response:', respError);
+            throw respError;
+        }
         
     } catch (error) {
         console.error('Error processing withdrawal:', error);

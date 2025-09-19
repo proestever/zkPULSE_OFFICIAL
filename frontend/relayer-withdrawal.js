@@ -42,7 +42,9 @@ async function executeRelayerWithdrawal(noteInput, recipientAddress) {
 
         // Step 3: Submit to relayer (NO WALLET SIGNATURE REQUIRED)
         showLoading(true, 'Submitting to relayer (no signature required)...');
-        
+
+        console.log('Submitting to relayer at:', `${relayerInfo.url}/v1/tornadoWithdraw`);
+
         const relayerResponse = await fetch(`${relayerInfo.url}/v1/tornadoWithdraw`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
