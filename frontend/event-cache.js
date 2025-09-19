@@ -26,11 +26,18 @@ class EventCache {
         try {
             if (fs.existsSync(contractCacheFile)) {
                 const data = JSON.parse(fs.readFileSync(contractCacheFile, 'utf8'));
-                console.log(`Loaded ${data.events.length} cached events for ${contractAddress} up to block ${data.lastBlock}`);
-                return data;
+                console.log(`[Cache] Loaded ${data.events.length} cached events for ${contractAddress} up to block ${data.lastBlock}`);
+
+                // Ensure lastBlock is a number
+                return {
+                    events: data.events,
+                    lastBlock: typeof data.lastBlock === 'string' ? parseInt(data.lastBlock) : data.lastBlock
+                };
+            } else {
+                console.log(`[Cache] No cache file found for ${contractAddress}, will fetch from blockchain`);
             }
         } catch (error) {
-            console.error('Error loading cache:', error);
+            console.error('[Cache] Error loading cache:', error);
         }
 
         return { events: [], lastBlock: 24200000 }; // Start from deployment block
@@ -41,26 +48,45 @@ class EventCache {
         const contractCacheFile = path.join(this.cacheDir, `events_${contractAddress.toLowerCase()}.json`);
 
         try {
-            // Convert BigInt values to strings for JSON serialization
-            const serializedEvents = events.map(event => ({
-                ...event,
-                blockNumber: event.blockNumber?.toString(),
-                returnValues: {
-                    ...event.returnValues,
-                    leafIndex: event.returnValues.leafIndex?.toString()
+            // Deep convert BigInt values to strings for JSON serialization
+            const serializedEvents = events.map(event => {
+                const serialized = {
+                    ...event,
+                    blockNumber: typeof event.blockNumber === 'bigint' ? event.blockNumber.toString() : event.blockNumber
+                };
+
+                // Handle returnValues - convert all BigInt values
+                if (event.returnValues) {
+                    serialized.returnValues = {};
+                    for (const key in event.returnValues) {
+                        const value = event.returnValues[key];
+                        serialized.returnValues[key] = typeof value === 'bigint' ? value.toString() : value;
+                    }
                 }
-            }));
+
+                // Handle other potential BigInt fields
+                if (event.transactionIndex !== undefined) {
+                    serialized.transactionIndex = typeof event.transactionIndex === 'bigint' ?
+                        event.transactionIndex.toString() : event.transactionIndex;
+                }
+                if (event.logIndex !== undefined) {
+                    serialized.logIndex = typeof event.logIndex === 'bigint' ?
+                        event.logIndex.toString() : event.logIndex;
+                }
+
+                return serialized;
+            });
 
             const data = {
                 events: serializedEvents,
-                lastBlock: lastBlock.toString ? lastBlock.toString() : lastBlock,
+                lastBlock: typeof lastBlock === 'bigint' ? lastBlock.toString() : lastBlock,
                 timestamp: Date.now()
             };
 
-            fs.writeFileSync(contractCacheFile, JSON.stringify(data));
-            console.log(`Cached ${events.length} events for ${contractAddress} up to block ${lastBlock}`);
+            fs.writeFileSync(contractCacheFile, JSON.stringify(data, null, 2));
+            console.log(`[Cache] Saved ${events.length} events for ${contractAddress} up to block ${lastBlock}`);
         } catch (error) {
-            console.error('Error saving cache:', error);
+            console.error('[Cache] Error saving cache:', error);
         }
     }
 
@@ -80,9 +106,11 @@ class EventCache {
         let events = cached.events;
         let fromBlock = cached.lastBlock + 1;
 
+        console.log(`[Cache] Status: ${events.length} cached events, will fetch from block ${fromBlock} to ${currentBlock}`);
+
         // Only fetch new events if there are new blocks
         if (fromBlock < currentBlock) {
-            console.log(`Fetching new events from block ${fromBlock} to ${currentBlock}`);
+            console.log(`[Cache] Fetching new events from block ${fromBlock} to ${currentBlock}`);
 
             try {
                 // Fetch only new events since last cache
