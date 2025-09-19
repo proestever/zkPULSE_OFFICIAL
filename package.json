@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node frontend/unified-server.js",
     "dev": "nodemon frontend/unified-server.js",
-    "test": "echo \"No tests configured\""
+    "test": "echo \"No tests configured\"",
+    "precache": "node frontend/precache-events.js",
+    "production": "node start-production.js"
   },
   "keywords": [
     "privacy",
