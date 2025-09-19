@@ -1,8 +1,15 @@
 // Production starter that runs both services
 const { spawn } = require('child_process');
 const path = require('path');
+const { buildAllCaches } = require('./frontend/precache-events');
 
 console.log('Starting zkPULSE Production Services...');
+
+// Pre-build event caches in background (non-blocking)
+console.log('Starting event cache pre-builder in background...');
+buildAllCaches().catch(err => {
+    console.error('Pre-cache failed (non-critical):', err);
+});
 
 // Start relayer in background
 const relayer = spawn('node', [path.join(__dirname, 'relayer', 'relayer-server.js')], {

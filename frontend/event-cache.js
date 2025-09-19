@@ -41,7 +41,22 @@ class EventCache {
         const contractCacheFile = path.join(this.cacheDir, `events_${contractAddress.toLowerCase()}.json`);
 
         try {
-            const data = { events, lastBlock, timestamp: Date.now() };
+            // Convert BigInt values to strings for JSON serialization
+            const serializedEvents = events.map(event => ({
+                ...event,
+                blockNumber: event.blockNumber?.toString(),
+                returnValues: {
+                    ...event.returnValues,
+                    leafIndex: event.returnValues.leafIndex?.toString()
+                }
+            }));
+
+            const data = {
+                events: serializedEvents,
+                lastBlock: lastBlock.toString ? lastBlock.toString() : lastBlock,
+                timestamp: Date.now()
+            };
+
             fs.writeFileSync(contractCacheFile, JSON.stringify(data));
             console.log(`Cached ${events.length} events for ${contractAddress} up to block ${lastBlock}`);
         } catch (error) {
