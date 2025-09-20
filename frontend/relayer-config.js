@@ -2,27 +2,16 @@
 
 // Determine relayer URL based on environment
 function getRelayerUrl() {
-    // In production (Render), the relayer runs on the same server on port 4000
-    // but must be accessed via proxy through the main server
-
     // Check if we're in a browser environment
     if (typeof window !== 'undefined') {
-        // In browser, check if we're on localhost
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            return 'http://localhost:4000';
-        } else {
-            // Production environment - use proxy path
-            return '/relayer';
-        }
-    }
-
-    // Server-side (Node.js) environment
-    if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'production') {
+        // Use relative path to access the integrated relayer endpoints
+        // This works for both local development and production deployment
+        // - Local: http://localhost:8888/relayer
+        // - Production: https://zkpulse-official.onrender.com/relayer
         return '/relayer';
     }
-
-    // Default to localhost for development
-    return 'http://localhost:4000';
+    // Server-side - use local relayer endpoints
+    return '/relayer';
 }
 
 // Always use local relayer when available
@@ -30,27 +19,16 @@ const relayerConfig = {
     // Default relayer registry (can be updated with your own relayers)
     relayers: [
         {
-            name: (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') ? "zkPULSE Official Relayer" : "Local Development Relayer",
+            name: "zkPULSE Official Relayer",
             address: "0x968DD9f833C58C0ADa629eF8f60180C7fEeF78d3", // Your relayer address
-            url: getRelayerUrl(), // Dynamically determined
+            url: getRelayerUrl(), // Uses https://zkpulse-official.onrender.com
             fee: 0.5, // Fee percentage (0.5%)
             status: "active",
             gasPrice: "standard",
             rating: 5,
             uptime: 100,
             supportedDenominations: ["1", "1M", "10M", "100M", "1B"],
-            isLocal: true
-        },
-        {
-            name: "zkPULSE Public Relayer (Backup)",
-            address: "0x968DD9f833C58C0ADa629eF8f60180C7fEeF78d3", // Your relayer address
-            url: "https://development-zkpulse-1.onrender.com", // Production relayer
-            fee: 0.5, // Fee percentage (0.5%)
-            status: "inactive", // Disabled for now - using local
-            gasPrice: "standard",
-            rating: 5,
-            uptime: 99.9,
-            supportedDenominations: ["1", "1M", "10M", "100M", "1B"]
+            isLocal: false
         },
         {
             name: "zkPulse Official Relayer",
