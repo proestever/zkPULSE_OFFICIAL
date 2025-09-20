@@ -6,8 +6,52 @@ const { getWeb3Instance } = require('./rpc-config');
 // Store for active jobs
 const activeJobs = new Map();
 
-// Tornado Cash contract ABI (withdrawal function)
-const TORNADO_ABI = require('../contracts/Tornado.json');
+// Tornado Cash contract ABI (withdrawal function only)
+const TORNADO_ABI = [
+    {
+        "inputs": [
+            {
+                "internalType": "bytes",
+                "name": "_proof",
+                "type": "bytes"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "_root",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "_nullifierHash",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address payable",
+                "name": "_recipient",
+                "type": "address"
+            },
+            {
+                "internalType": "address payable",
+                "name": "_relayer",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_fee",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_refund",
+                "type": "uint256"
+            }
+        ],
+        "name": "withdraw",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    }
+];
 
 // Contract addresses
 const CONTRACTS = {
