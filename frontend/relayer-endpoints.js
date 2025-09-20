@@ -219,14 +219,32 @@ async function processWithdrawal(jobId, { proof, args, contract, denomination })
                 throw new Error('Proof missing pi_a, pi_b, or pi_c');
             }
 
-            // Format proof for the contract - need to pack it into bytes
-            const websnarkUtils = require('websnark/src/utils');
+            // Format proof for the contract - we need to flatten the proof components
+            // The contract expects a single bytes array with all proof elements concatenated
 
-            // The proof object needs to be packed for the contract
-            const packedProof = websnarkUtils.toSolidityInput(proofObj);
+            // Flatten pi_a (2 elements), pi_b (2x2 elements), pi_c (2 elements)
+            const flatProof = [
+                proofObj.pi_a[0],
+                proofObj.pi_a[1],
+                proofObj.pi_b[0][1],  // Note: pi_b is in reverse order for Ethereum
+                proofObj.pi_b[0][0],
+                proofObj.pi_b[1][1],
+                proofObj.pi_b[1][0],
+                proofObj.pi_c[0],
+                proofObj.pi_c[1]
+            ];
 
-            // Store both formats
-            proofData = packedProof.proof; // This is the hex string the contract expects
+            // Convert each element to hex and pad to 32 bytes
+            const hexElements = flatProof.map(el => {
+                const hex = BigInt(el).toString(16);
+                return hex.padStart(64, '0');
+            });
+
+            // Concatenate all hex strings with 0x prefix
+            proofData = '0x' + hexElements.join('');
+
+            console.log('Formatted proof for contract (first 100 chars):', proofData.substring(0, 100) + '...');
+
         } catch (parseError) {
             console.error('Failed to parse proof:', parseError);
             console.log('Proof data received:', JSON.stringify(proof).substring(0, 200));
