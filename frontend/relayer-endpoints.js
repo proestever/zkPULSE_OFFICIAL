@@ -194,11 +194,30 @@ async function processWithdrawal(jobId, { proof, args, contract, denomination })
         // Create contract instance
         const tornadoContract = new web3.eth.Contract(TORNADO_ABI, contract);
 
-        // Parse the proof - it comes as a string that needs to be parsed
+        // Parse the proof - handle various formats
         let proofData;
         try {
-            // If proof is a string, parse it
-            const proofObj = typeof proof === 'string' ? JSON.parse(proof) : proof;
+            let proofObj = proof;
+
+            // Handle double-stringified JSON
+            if (typeof proof === 'string') {
+                try {
+                    proofObj = JSON.parse(proof);
+                    // If it's still a string after parsing, parse again
+                    if (typeof proofObj === 'string') {
+                        proofObj = JSON.parse(proofObj);
+                    }
+                } catch (e) {
+                    console.error('First parse attempt failed:', e);
+                    proofObj = proof;
+                }
+            }
+
+            // Check if we have the expected proof structure
+            if (!proofObj || !proofObj.pi_a || !proofObj.pi_b || !proofObj.pi_c) {
+                console.error('Proof object missing required fields. Received:', proofObj);
+                throw new Error('Proof missing pi_a, pi_b, or pi_c');
+            }
 
             // Format proof for the contract
             proofData = {
@@ -208,8 +227,8 @@ async function processWithdrawal(jobId, { proof, args, contract, denomination })
             };
         } catch (parseError) {
             console.error('Failed to parse proof:', parseError);
-            console.log('Proof data received:', proof);
-            throw new Error('Invalid proof format');
+            console.log('Proof data received:', JSON.stringify(proof).substring(0, 200));
+            throw new Error('Invalid proof format: ' + parseError.message);
         }
 
         // Build transaction
