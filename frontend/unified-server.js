@@ -530,6 +530,7 @@ app.post('/api/withdraw', async (req, res) => {
 app.get('/api/relayers', (req, res) => {
     const { denomination } = req.query;
     const relayers = getActiveRelayers(denomination);
+    console.log('Serving relayers to frontend:', relayers.map(r => ({ name: r.name, url: r.url })));
     res.json(relayers);
 });
 
