@@ -4,12 +4,12 @@
   "description": "ZK Pulse - Privacy mixer for PulseChain using zero-knowledge proofs",
   "main": "frontend/unified-server.js",
   "scripts": {
-    "start": "node start-production.js",
+    "start": "node frontend/unified-server.js",
     "start:frontend": "node frontend/unified-server.js",
     "dev": "nodemon frontend/unified-server.js",
     "test": "echo \"No tests configured\"",
     "precache": "node frontend/precache-events.js",
-    "production": "node start-production.js"
+    "production": "node frontend/unified-server.js"
   },
   "keywords": [
     "privacy",
