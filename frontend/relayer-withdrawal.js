@@ -47,6 +47,10 @@ async function executeRelayerWithdrawal(noteInput, recipientAddress) {
 
         console.log('Submitting to relayer at:', `${relayerInfo.url}/v1/tornadoWithdraw`);
 
+        // Add timeout to prevent hanging
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
+
         const relayerResponse = await fetch(`${relayerInfo.url}/v1/tornadoWithdraw`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -55,8 +59,9 @@ async function executeRelayerWithdrawal(noteInput, recipientAddress) {
                 args: proofData.args,
                 contract: proofData.contractAddress,
                 denomination: getDenominationFromNote(noteInput)
-            })
-        });
+            }),
+            signal: controller.signal
+        }).finally(() => clearTimeout(timeoutId));
 
         if (!relayerResponse.ok) {
             // Handle rate limiting specifically
