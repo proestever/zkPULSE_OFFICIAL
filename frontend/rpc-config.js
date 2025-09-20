@@ -13,7 +13,7 @@ const RPC_ENDPOINTS = {
         'wss://ws.pulsechain.com',           // Primary WebSocket
         'wss://pulsechain-rpc.publicnode.com',
         'wss://rpc-pulsechain.g4mm4.io',
-        'wss://rpc.gigatheminter.com/ws'     // Your WebSocket as fallback
+        'wss://rpc.gigatheminter.com:8443'     // Your WebSocket as fallback
     ]
 };
 
