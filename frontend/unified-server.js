@@ -268,9 +268,9 @@ async function generateProof({ deposit, recipient, contractAddress, relayerAddre
     
     const proofData = await websnarkUtils.genWitnessAndProve(groth16, input, circuit, proving_key);
     const { proof } = websnarkUtils.toSolidityInput(proofData);
-    
+
     console.timeEnd('Proof generation');
-    
+
     const args = [
         toHex(input.root),
         toHex(input.nullifierHash),
@@ -279,8 +279,9 @@ async function generateProof({ deposit, recipient, contractAddress, relayerAddre
         toHex(input.fee),
         toHex(input.refund)
     ];
-    
-    return { proof, args };
+
+    // Return both the packed proof (for direct contract calls) and the original proof data (for relayer)
+    return { proof, args, proofData };
 }
 
 // PRIVACY PROTECTION: All deposit storage functions have been removed.
@@ -461,14 +462,14 @@ app.post('/api/withdraw', async (req, res) => {
         }
         
         // Generate proof
-        const { proof, args } = await generateProof({ 
-            deposit, 
+        const { proof, args, proofData } = await generateProof({
+            deposit,
             recipient: recipient || '0x0000000000000000000000000000000000000000',
             contractAddress,
             relayerAddress: finalRelayerAddress,
             fee: fee
         });
-        
+
         console.log('✅ ZK proof generated successfully');
 
         try {
@@ -487,7 +488,8 @@ app.post('/api/withdraw', async (req, res) => {
 
             // Return proof data for frontend to execute
             const responseData = {
-                proof,
+                proof,            // Packed proof for direct contract calls (hex string)
+                proofData,        // Original proof object for relayer (contains pi_a, pi_b, pi_c)
                 args,
                 contractAddress,
                 commitment: deposit.commitmentHex || 'not-available',
