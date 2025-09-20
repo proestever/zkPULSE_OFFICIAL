@@ -194,61 +194,17 @@ async function processWithdrawal(jobId, { proof, args, contract, denomination })
         // Create contract instance
         const tornadoContract = new web3.eth.Contract(TORNADO_ABI, contract);
 
-        // Parse the proof - handle various formats
-        let proofData;
-        try {
-            let proofObj = proof;
+        // The proof should already be formatted by the backend (using websnarkUtils.toSolidityInput)
+        // We just need to pass it directly to the contract
+        let proofData = proof;
 
-            // Handle double-stringified JSON
-            if (typeof proof === 'string') {
-                try {
-                    proofObj = JSON.parse(proof);
-                    // If it's still a string after parsing, parse again
-                    if (typeof proofObj === 'string') {
-                        proofObj = JSON.parse(proofObj);
-                    }
-                } catch (e) {
-                    console.error('First parse attempt failed:', e);
-                    proofObj = proof;
-                }
-            }
+        console.log('Proof type:', typeof proof);
+        console.log('Proof (first 100 chars):', proof ? proof.toString().substring(0, 100) + '...' : 'undefined');
 
-            // Check if we have the expected proof structure
-            if (!proofObj || !proofObj.pi_a || !proofObj.pi_b || !proofObj.pi_c) {
-                console.error('Proof object missing required fields. Received:', proofObj);
-                throw new Error('Proof missing pi_a, pi_b, or pi_c');
-            }
-
-            // Format proof for the contract - we need to flatten the proof components
-            // The contract expects a single bytes array with all proof elements concatenated
-
-            // Flatten pi_a (2 elements), pi_b (2x2 elements), pi_c (2 elements)
-            const flatProof = [
-                proofObj.pi_a[0],
-                proofObj.pi_a[1],
-                proofObj.pi_b[0][1],  // Note: pi_b is in reverse order for Ethereum
-                proofObj.pi_b[0][0],
-                proofObj.pi_b[1][1],
-                proofObj.pi_b[1][0],
-                proofObj.pi_c[0],
-                proofObj.pi_c[1]
-            ];
-
-            // Convert each element to hex and pad to 32 bytes
-            const hexElements = flatProof.map(el => {
-                const hex = BigInt(el).toString(16);
-                return hex.padStart(64, '0');
-            });
-
-            // Concatenate all hex strings with 0x prefix
-            proofData = '0x' + hexElements.join('');
-
-            console.log('Formatted proof for contract (first 100 chars):', proofData.substring(0, 100) + '...');
-
-        } catch (parseError) {
-            console.error('Failed to parse proof:', parseError);
-            console.log('Proof data received:', JSON.stringify(proof).substring(0, 200));
-            throw new Error('Invalid proof format: ' + parseError.message);
+        // Validate it's a hex string
+        if (!proofData || typeof proofData !== 'string' || !proofData.startsWith('0x')) {
+            console.error('Invalid proof format. Expected hex string starting with 0x, got:', typeof proofData);
+            throw new Error('Invalid proof format - expected hex string');
         }
 
         // Build transaction
