@@ -88,7 +88,7 @@ async function executeRelayerWithdrawal(noteInput, recipientAddress) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                proof: proofData.proofData,  // Send the original proof object with pi_a, pi_b, pi_c
+                proof: proofData.proof,  // Send the formatted hex proof from backend
                 args: proofData.args,
                 contract: proofData.contractAddress,
                 denomination: getDenominationFromNote(noteInput)
