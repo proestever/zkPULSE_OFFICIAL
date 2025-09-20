@@ -180,7 +180,8 @@ async function processWithdrawal(jobId, { proof, args, contract, denomination })
     console.log(`Contract: ${contract}`);
     console.log(`Denomination: ${denomination}`);
     console.log(`Args:`, args);
-    console.log(`Proof length:`, proof.length);
+    console.log(`Proof type:`, typeof proof);
+    console.log(`Proof:`, proof ? (typeof proof === 'string' ? proof.substring(0, 100) + '...' : proof) : 'undefined');
 
     try {
         const web3 = await getWeb3Instance();
@@ -193,12 +194,23 @@ async function processWithdrawal(jobId, { proof, args, contract, denomination })
         // Create contract instance
         const tornadoContract = new web3.eth.Contract(TORNADO_ABI, contract);
 
-        // Parse the proof for groth16
-        const proofData = {
-            a: [proof.pi_a[0], proof.pi_a[1]],
-            b: [[proof.pi_b[0][1], proof.pi_b[0][0]], [proof.pi_b[1][1], proof.pi_b[1][0]]],
-            c: [proof.pi_c[0], proof.pi_c[1]]
-        };
+        // Parse the proof - it comes as a string that needs to be parsed
+        let proofData;
+        try {
+            // If proof is a string, parse it
+            const proofObj = typeof proof === 'string' ? JSON.parse(proof) : proof;
+
+            // Format proof for the contract
+            proofData = {
+                a: [proofObj.pi_a[0], proofObj.pi_a[1]],
+                b: [[proofObj.pi_b[0][1], proofObj.pi_b[0][0]], [proofObj.pi_b[1][1], proofObj.pi_b[1][0]]],
+                c: [proofObj.pi_c[0], proofObj.pi_c[1]]
+            };
+        } catch (parseError) {
+            console.error('Failed to parse proof:', parseError);
+            console.log('Proof data received:', proof);
+            throw new Error('Invalid proof format');
+        }
 
         // Build transaction
         const account = web3.eth.accounts.privateKeyToAccount(RELAYER_CONFIG.privateKey);
