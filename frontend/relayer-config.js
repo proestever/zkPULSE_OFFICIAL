@@ -4,11 +4,24 @@
 function getRelayerUrl() {
     // In production (Render), the relayer runs on the same server on port 4000
     // but must be accessed via proxy through the main server
-    if (process.env.NODE_ENV === 'production') {
-        // For production, we'll proxy to the internal relayer
-        return '/relayer'; // This will be proxied by the main server
+
+    // Check if we're in a browser environment
+    if (typeof window !== 'undefined') {
+        // In browser, check if we're on localhost
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            return 'http://localhost:4000';
+        } else {
+            // Production environment - use proxy path
+            return '/relayer';
+        }
     }
-    // For local development
+
+    // Server-side (Node.js) environment
+    if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'production') {
+        return '/relayer';
+    }
+
+    // Default to localhost for development
     return 'http://localhost:4000';
 }
 
@@ -17,7 +30,7 @@ const relayerConfig = {
     // Default relayer registry (can be updated with your own relayers)
     relayers: [
         {
-            name: process.env.NODE_ENV === 'production' ? "zkPULSE Official Relayer" : "Local Development Relayer",
+            name: (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') ? "zkPULSE Official Relayer" : "Local Development Relayer",
             address: "0x968DD9f833C58C0ADa629eF8f60180C7fEeF78d3", // Your relayer address
             url: getRelayerUrl(), // Dynamically determined
             fee: 0.5, // Fee percentage (0.5%)

@@ -16,6 +16,8 @@ async function executeRelayerWithdrawal(noteInput, recipientAddress) {
         }
 
         console.log('Using relayer:', relayerInfo);
+        console.log('Relayer URL:', relayerInfo.url);
+        console.log('Full submission URL:', `${relayerInfo.url}/v1/tornadoWithdraw`);
         
         // Step 2: Generate proof with relayer fee
         showLoading(true, 'Generating zero-knowledge proof for relayer...');
