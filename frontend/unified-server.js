@@ -22,23 +22,11 @@ const PORT = process.env.PORT || 8888;
 // Middleware
 app.use(express.json());
 
-// Proxy relayer requests in production
-if (process.env.NODE_ENV === 'production') {
-    const { createProxyMiddleware } = require('http-proxy-middleware');
+// Add integrated relayer endpoints (no separate service needed)
+const { addRelayerEndpoints } = require('./relayer-endpoints');
+addRelayerEndpoints(app);
 
-    // Proxy /relayer requests to internal relayer service on port 4000
-    app.use('/relayer', createProxyMiddleware({
-        target: 'http://localhost:4000',
-        changeOrigin: true,
-        pathRewrite: {
-            '^/relayer': '' // Remove /relayer prefix when forwarding
-        },
-        onError: (err, req, res) => {
-            console.error('Relayer proxy error:', err);
-            res.status(500).json({ error: 'Relayer service unavailable' });
-        }
-    }));
-}
+console.log('Relayer endpoints integrated into main server');
 
 app.use(express.static(__dirname));
 app.use('/build', express.static(path.join(__dirname, '..', 'build')));
@@ -512,7 +500,10 @@ app.post('/api/withdraw', async (req, res) => {
             console.log('Response data size:', JSON.stringify(responseData).length, 'bytes');
             console.log('Sending proof response to frontend...');
 
-            res.json(responseData);
+            // Set headers to prevent timeout
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.status(200).json(responseData);
 
             console.log('Response sent successfully');
         } catch (respError) {
