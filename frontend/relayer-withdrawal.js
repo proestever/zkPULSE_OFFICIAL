@@ -5,9 +5,42 @@ async function executeRelayerWithdrawal(noteInput, recipientAddress) {
     try {
         // Step 1: Get relayer selection
         const relayerInfo = window.relayerUI ? window.relayerUI.getSelectedRelayer() : null;
-        
+
         if (!relayerInfo || !relayerInfo.url) {
             throw new Error('No relayer selected or relayer URL not configured');
+        }
+
+        // Check if relayer is accessible
+        showLoading(true, 'Checking relayer availability...');
+        try {
+            const statusCheck = await fetch(`${relayerInfo.url}/status`, {
+                method: 'GET',
+                timeout: 5000
+            });
+
+            if (!statusCheck.ok) {
+                throw new Error(`Relayer not responding (HTTP ${statusCheck.status})`);
+            }
+        } catch (error) {
+            console.error('Relayer not accessible:', error);
+            showLoading(false);
+
+            // Ask user if they want to proceed with direct withdrawal
+            const proceed = confirm('The relayer service is not responding. Would you like to proceed with a direct withdrawal instead? This will require MetaMask and will not be anonymous.');
+
+            if (proceed) {
+                // Fallback to direct withdrawal
+                showMessage('Falling back to direct withdrawal...', 'warning');
+                if (window.originalWithdraw) {
+                    // Uncheck the relayer checkbox
+                    const useRelayerCheckbox = document.getElementById('useRelayer');
+                    if (useRelayerCheckbox) {
+                        useRelayerCheckbox.checked = false;
+                    }
+                    return window.originalWithdraw();
+                }
+            }
+            throw new Error('Relayer service is not available. Please try again later or use direct withdrawal.');
         }
 
         // Ensure we have the correct relayer address
