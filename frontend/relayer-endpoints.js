@@ -219,12 +219,14 @@ async function processWithdrawal(jobId, { proof, args, contract, denomination })
                 throw new Error('Proof missing pi_a, pi_b, or pi_c');
             }
 
-            // Format proof for the contract
-            proofData = {
-                a: [proofObj.pi_a[0], proofObj.pi_a[1]],
-                b: [[proofObj.pi_b[0][1], proofObj.pi_b[0][0]], [proofObj.pi_b[1][1], proofObj.pi_b[1][0]]],
-                c: [proofObj.pi_c[0], proofObj.pi_c[1]]
-            };
+            // Format proof for the contract - need to pack it into bytes
+            const websnarkUtils = require('websnark/src/utils');
+
+            // The proof object needs to be packed for the contract
+            const packedProof = websnarkUtils.toSolidityInput(proofObj);
+
+            // Store both formats
+            proofData = packedProof.proof; // This is the hex string the contract expects
         } catch (parseError) {
             console.error('Failed to parse proof:', parseError);
             console.log('Proof data received:', JSON.stringify(proof).substring(0, 200));
