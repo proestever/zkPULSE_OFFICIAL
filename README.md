@@ -4,12 +4,12 @@
 
   [![PulseChain](https://img.shields.io/badge/PulseChain-Native-00ff41)](https://pulsechain.com)
   [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-  [![Website](https://img.shields.io/badge/Website-zkpulse.io-00ff41)](https://zkpulse.io)
+  [![Website](https://img.shields.io/badge/Website-zkpulse.app-00ff41)](https://zkpulse.app)
   [![GitHub](https://img.shields.io/badge/GitHub-zkPULSE__OFFICIAL-181717?logo=github)](https://github.com/proestever/zkPULSE_OFFICIAL)
 
   **Zero-Knowledge Privacy Protocol for PulseChain**
 
-  [Website](https://zkpulse.io) • [Documentation](https://docs.zkpulse.io) • [Twitter](https://twitter.com/zkpulse)
+  [Website](https://zkpulse.app) • [Twitter](https://twitter.com/zkpulse)
 </div>
 
 ---
@@ -185,18 +185,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Wait before withdrawing for larger anonymity set
 
 ### Bug Bounty
-Coming soon - Details at [zkpulse.io/security](https://zkpulse.io/security)
+Coming soon - Details at [zkpulse.app/security](https://zkpulse.app/security)
 
 ### Security Contact
-security@zkpulse.io
+security@zkpulse.app
 
 **IMPORTANT**: This is experimental software. Use at your own risk.
 
 ## 🔗 Official Links
 
-- **Website**: [https://zkpulse.io](https://zkpulse.io)
+- **Website**: [https://zkpulse.app](https://zkpulse.app)
 - **GitHub**: [https://github.com/proestever/zkPULSE_OFFICIAL](https://github.com/proestever/zkPULSE_OFFICIAL)
-- **Documentation**: [https://docs.zkpulse.io](https://docs.zkpulse.io)
 - **Twitter**: [@zkpulse](https://twitter.com/zkpulse)
 - **Telegram**: [t.me/zkpulse](https://t.me/zkpulse)
 - **Discord**: [discord.gg/zkpulse](https://discord.gg/zkpulse)
@@ -215,7 +214,7 @@ security@zkpulse.io
   <p>Made with 💚 by the zkPULSE Team</p>
 
   <p>
-    <a href="https://zkpulse.io">Website</a> •
+    <a href="https://zkpulse.app">Website</a> •
     <a href="https://github.com/proestever/zkPULSE_OFFICIAL">GitHub</a> •
     <a href="https://twitter.com/zkpulse">Twitter</a>
   </p>
