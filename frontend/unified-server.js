@@ -26,6 +26,10 @@ app.use(express.json());
 const { addRelayerEndpoints } = require('./relayer-endpoints');
 addRelayerEndpoints(app);
 
+// Initialize stats service
+const StatsService = require('./stats-service');
+const statsService = new StatsService();
+
 console.log('Relayer endpoints integrated into main server');
 
 app.use(express.static(__dirname));
@@ -541,7 +545,7 @@ app.get('/api/relayer-fee', (req, res) => {
 
 // Health check
 app.get('/api/health', (req, res) => {
-    res.json({ 
+    res.json({
         status: 'ok',
         network: 'PulseChain',
         contracts: CONTRACTS,
@@ -550,6 +554,21 @@ app.get('/api/health', (req, res) => {
         compatible: 'CLI and Web fully compatible',
         relayerSupport: 'enabled'
     });
+});
+
+// Network stats API endpoint - cached for performance
+app.get('/api/stats', async (req, res) => {
+    try {
+        const forceRefresh = req.query.refresh === 'true';
+        const stats = await statsService.getStats(forceRefresh);
+        res.json(stats);
+    } catch (error) {
+        console.error('Error fetching stats:', error);
+        res.status(500).json({
+            error: 'Failed to fetch network stats',
+            message: error.message
+        });
+    }
 });
 
 // Serve index.html
@@ -595,6 +614,10 @@ async function start() {
         const blockNumber = await web3.eth.getBlockNumber();
         const chainId = await web3.eth.getChainId();
         console.log(`✅ Connected to PulseChain (Chain ID: ${chainId}, Block: ${blockNumber})`);
+
+        // Initialize stats service with web3
+        await statsService.initialize(web3);
+        console.log('✅ Stats service initialized');
     } catch (error) {
         console.error('Failed to connect to PulseChain:', error);
         process.exit(1);

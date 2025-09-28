@@ -49,7 +49,7 @@ async function generateWithdrawalProof(noteString, recipientAddress) {
         }
         
         const proofData = await response.json();
-        console.log('Proof generated:', proofData);
+        // Proof generated successfully
         
         return {
             proofData,

@@ -842,8 +842,10 @@
                 </span>
                 <span style="color: #ff8c00; font-size: 12px; margin-left: 5px;">zkPULSE</span>
             </div>
+            <!-- Disabled duplicate burned token fetching - handled by app-complete.js and burned-stats-pulsescan.js -->
             <script>
-                // Load zkPULSE burned amount
+                // DISABLED - duplicate functionality
+                /*
                 async function loadZkPulseBurned() {
                     try {
                         if (typeof web3 === 'undefined' || !web3) {
@@ -880,7 +882,7 @@
                         
                         document.getElementById('burnedAmount').textContent = formattedAmount;
                     } catch (error) {
-                        console.error('Error loading zkPULSE burned amount:', error);
+                        // Silently handle error - burned amount will show 0
                         document.getElementById('burnedAmount').textContent = 'Error loading';
                     }
                 }
@@ -891,6 +893,7 @@
                     // Refresh every 5 minutes
                     setInterval(loadZkPulseBurned, 300000);
                 });
+                */
             </script>
         </div>
     </div>
@@ -995,7 +998,8 @@
     <script src="deposit-tracker.js"></script>
     <script src="deposit-recovery.js"></script>
     <script src="app-complete.js"></script>
-    <script src="enhanced-stats.js"></script>
+    <script src="burned-stats-pulsescan.js"></script>
+    <script src="fast-stats.js"></script>
     <script src="relayer-ui.js"></script>
     <script src="relayer-withdrawal.js"></script>
     
