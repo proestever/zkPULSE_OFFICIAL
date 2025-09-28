@@ -170,25 +170,19 @@ Please ensure:
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is completely open source and free for anyone to use, modify, and distribute. Licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## ⚠️ Security
 
 ### Audit Status
 - Core contracts based on audited Tornado Cash codebase
-- Additional audits pending
+- Community-reviewed code
 
 ### Best Practices
 - Always verify contract addresses
 - Never share your note/proof
 - Use VPN for additional privacy
 - Wait before withdrawing for larger anonymity set
-
-### Bug Bounty
-Coming soon - Details at [zkpulse.app/security](https://zkpulse.app/security)
-
-### Security Contact
-security@zkpulse.app
 
 **IMPORTANT**: This is experimental software. Use at your own risk.
 
@@ -198,7 +192,6 @@ security@zkpulse.app
 - **GitHub**: [https://github.com/proestever/zkPULSE_OFFICIAL](https://github.com/proestever/zkPULSE_OFFICIAL)
 - **Twitter**: [@zkpulse](https://twitter.com/zkpulse)
 - **Telegram**: [t.me/zkpulse](https://t.me/zkpulse)
-- **Discord**: [discord.gg/zkpulse](https://discord.gg/zkpulse)
 
 ## 🙏 Acknowledgments
 
