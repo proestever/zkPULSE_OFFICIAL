@@ -191,7 +191,7 @@ This project is completely open source and free for anyone to use, modify, and d
 - **Website**: [https://zkpulse.app](https://zkpulse.app)
 - **GitHub**: [https://github.com/proestever/zkPULSE_OFFICIAL](https://github.com/proestever/zkPULSE_OFFICIAL)
 - **Twitter**: [@zkpulse](https://twitter.com/zkpulse)
-- **Telegram**: [t.me/zkpulse](https://t.me/zkpulse)
+- **Telegram**: [t.me/frenkabal](https://t.me/frenkabal)
 
 ## 🙏 Acknowledgments
 
