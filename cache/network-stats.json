@@ -1,0 +1,47 @@
+{
+  "timestamp": 1759070106417,
+  "data": {
+    "denominations": {
+      "1M": {
+        "deposits": 126,
+        "withdrawals": 0,
+        "active": 126,
+        "balance": "13000000",
+        "balanceFormatted": "13.00M PLS",
+        "address": "0x65d1D748b4d513756cA179049227F6599D803594"
+      },
+      "1B": {
+        "deposits": 0,
+        "withdrawals": 0,
+        "active": 0,
+        "balance": "0",
+        "balanceFormatted": "0 PLS",
+        "address": "0x282476B716146eAAbCfBDd339e527903deFD969b"
+      },
+      "10M": {
+        "deposits": 50,
+        "withdrawals": 0,
+        "active": 50,
+        "balance": "40000000",
+        "balanceFormatted": "40.0M PLS",
+        "address": "0x21349F435c703F933eBF2bb2A5aB2d716e00b205"
+      },
+      "100M": {
+        "deposits": 4,
+        "withdrawals": 0,
+        "active": 4,
+        "balance": "0",
+        "balanceFormatted": "0 PLS",
+        "address": "0x2443ccEef2D2803A97A12f5A9AA7db3BEc154B73"
+      }
+    },
+    "total": {
+      "deposits": 180,
+      "withdrawals": 0,
+      "active": 180,
+      "balance": "53000000",
+      "balanceFormatted": "53.00M PLS"
+    },
+    "lastUpdate": 1759070106140
+  }
+}
